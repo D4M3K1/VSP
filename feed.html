@@ -391,38 +391,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-  import {
-    getDatabase, ref, push, onChildAdded, onValue
-  } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCMQh6NcBxIpNpM9J7ULGtjMukYGx4GyKg",
-    authDomain: "vs-forces.firebaseapp.com",
-    databaseURL: "https://vs-forces-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "vs-forces",
-    storageBucket: "vs-forces.firebasestorage.app",
-    messagingSenderId: "484336329710",
-    appId: "1:484336329710:web:99f7f1d9ae0591571ea4ff",
-    measurementId: "G-8PPXXCTFSQ"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  const ENCRYPTION_KEY = 'vsf-community-secret';
-
-  function encrypt(text) {
-    return CryptoJS.AES.encrypt(text, ENCRYPTION_KEY).toString();
-  }
-
-  function decrypt(cipherText) {
-    try {
-      return CryptoJS.AES.decrypt(cipherText, ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8);
-    } catch (e) {
-      return '[Encrypted Message]';
-    }
-  }
+  function _0x16a4(_0x1bad79,_0x31b9f5){const _0x140ecb=_0x140e();return _0x16a4=function(_0x16a432,_0x40754a){_0x16a432=_0x16a432-0x116;let _0x56edfb=_0x140ecb[_0x16a432];return _0x56edfb;},_0x16a4(_0x1bad79,_0x31b9f5);}const _0x274385=_0x16a4;(function(_0x3fa983,_0x485c00){const _0x129f77=_0x16a4,_0x4c21e8=_0x3fa983();while(!![]){try{const _0x3f1506=-parseInt(_0x129f77(0x118))/0x1*(-parseInt(_0x129f77(0x11a))/0x2)+-parseInt(_0x129f77(0x11b))/0x3+parseInt(_0x129f77(0x120))/0x4+parseInt(_0x129f77(0x125))/0x5+-parseInt(_0x129f77(0x11e))/0x6+parseInt(_0x129f77(0x124))/0x7*(parseInt(_0x129f77(0x11f))/0x8)+-parseInt(_0x129f77(0x12c))/0x9;if(_0x3f1506===_0x485c00)break;else _0x4c21e8['push'](_0x4c21e8['shift']());}catch(_0x2e681a){_0x4c21e8['push'](_0x4c21e8['shift']());}}}(_0x140e,0x3b245));import{initializeApp}from'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';import{getDatabase,ref,push,onChildAdded,onValue}from'https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js';const firebaseConfig={'apiKey':_0x274385(0x122),'authDomain':_0x274385(0x119),'databaseURL':_0x274385(0x126),'projectId':_0x274385(0x12a),'storageBucket':_0x274385(0x128),'messagingSenderId':_0x274385(0x129),'appId':'1:484336329710:web:99f7f1d9ae0591571ea4ff','measurementId':_0x274385(0x12b)},app=initializeApp(firebaseConfig),db=getDatabase(app),ENCRYPTION_KEY=_0x274385(0x123);function encrypt(_0x8c2813){const _0x1aeb7f=_0x274385;return CryptoJS[_0x1aeb7f(0x116)][_0x1aeb7f(0x117)](_0x8c2813,ENCRYPTION_KEY)[_0x1aeb7f(0x11d)]();}function decrypt(_0x580c61){const _0x5d87b7=_0x274385;try{return CryptoJS[_0x5d87b7(0x116)]['decrypt'](_0x580c61,ENCRYPTION_KEY)[_0x5d87b7(0x11d)](CryptoJS[_0x5d87b7(0x127)][_0x5d87b7(0x11c)]);}catch(_0x1b05da){return _0x5d87b7(0x121);}}function _0x140e(){const _0x23dd27=['24tmBuHT','124323VENxIn','Utf8','toString','2646714MEtkme','108208hVEyXw','869984EgEwMK','[Encrypted\x20Message]','AIzaSyCMQh6NcBxIpNpM9J7ULGtjMukYGx4GyKg','vsf-community-secret','161epiadl','1270395KkVMtQ','https://vs-forces-default-rtdb.europe-west1.firebasedatabase.app','enc','vs-forces.firebasestorage.app','484336329710','vs-forces','G-8PPXXCTFSQ','3075984qjkqgm','AES','encrypt','23659gQwOHL','vs-forces.firebaseapp.com'];_0x140e=function(){return _0x23dd27;};return _0x140e();}
 
   const postTypeSelect = document.getElementById('post-type');
   const articleFields = document.getElementById('article-fields');
@@ -779,29 +748,6 @@
     }, 500); // Match transition duration
   });
 </script>
-<script>
-    // Disable right-click, devtools shortcuts, and detect devtools open
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('keydown', e => {
-      if (
-        e.key === "F12" ||
-        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
-        (e.ctrlKey && e.key === 'U') ||
-        (e.metaKey && e.altKey && e.key === 'I')
-      ) {
-        e.preventDefault();
-        return false;
-      }
-    });
-
-    setInterval(() => {
-      const widthThreshold = window.outerWidth - window.innerWidth > 100;
-      const heightThreshold = window.outerHeight - window.innerHeight > 100;
-      if (widthThreshold || heightThreshold) {
-        document.body.innerHTML = '<h1 style="color:white;text-align:center;margin-top:40vh;">Access Denied</h1>';
-      }
-    }, 1000);
-  </script>
 
 </body>
 </html>
