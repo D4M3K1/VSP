@@ -104,60 +104,54 @@
     </form>
   </div>
 
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+  import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-            apiKey: "AIzaSyCMQh6NcBxIpNpM9J7ULGtjMukYGx4GyKg",
-            authDomain: "vs-forces.firebaseapp.com",
-            databaseURL: "https://vs-forces-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "vs-forces",
-            storageBucket: "vs-forces.firebasestorage.app",
-            messagingSenderId: "484336329710",
-            appId: "1:484336329710:web:99f7f1d9ae0591571ea4ff",
-            measurementId: "G-8PPXXCTFSQ"
-        };
+  const firebaseConfig = {
+    apiKey: "AIzaSyCMQh6NcBxIpNpM9J7ULGtjMukYGx4GyKg",
+    authDomain: "vs-forces.firebaseapp.com",
+    databaseURL: "https://vs-forces-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "vs-forces",
+    storageBucket: "vs-forces.firebasestorage.app",
+    messagingSenderId: "484336329710",
+    appId: "1:484336329710:web:99f7f1d9ae0591571ea4ff",
+    measurementId: "G-8PPXXCTFSQ"
+  };
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-    </script>
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-  <script>
-    const chatLog = document.getElementById('chat-log');
-    const chatForm = document.getElementById('chat-form');
-    const chatInput = document.getElementById('chat-input');
+  const chatLog = document.getElementById('chat-log');
+  const chatForm = document.getElementById('chat-form');
+  const chatInput = document.getElementById('chat-input');
+  const userId = `User #${Math.floor(Math.random() * 9000 + 1000)}`;
 
-    const userId = `User #${Math.floor(Math.random() * 9000 + 1000)}`;
+  chatForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const message = chatInput.value.trim();
+    if (!message) return;
 
-    chatForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const message = chatInput.value.trim();
-      if (!message) return;
-
-      const msgElement = document.createElement('div');
-      msgElement.className = 'message';
-      msgElement.innerHTML = `<span class="user">${userId}:</span> ${message}`;
-      chatLog.appendChild(msgElement);
-
-      chatLog.scrollTop = chatLog.scrollHeight;
-      chatInput.value = '';
+    push(ref(db, 'messages'), {
+      user: userId,
+      text: message,
+      time: Date.now()
     });
-        db.ref('messages').limitToLast(50).on('child_added', snapshot => {
-        const msg = snapshot.val();
-        const msgElement = document.createElement('div');
-        msgElement.className = 'message';
-        msgElement.innerHTML = `<span class="user">${msg.user}:</span> ${msg.text}`;
-        chatLog.appendChild(msgElement);
-        chatLog.scrollTop = chatLog.scrollHeight;
-    });
-  </script>
+
+    chatInput.value = '';
+  });
+
+  onChildAdded(ref(db, 'messages'), snapshot => {
+    const msg = snapshot.val();
+    const div = document.createElement('div');
+    div.className = 'message';
+    div.innerHTML = `<span class="user">${msg.user}:</span> ${msg.text}`;
+    chatLog.appendChild(div);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  });
+</script>
+
+
 
   <!-- Reuse same VSF particle background -->
   <script>
