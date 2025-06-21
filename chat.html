@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>VSF Community Chat</title>
+
   <style>
     html, body {
       margin: 0;
@@ -13,6 +14,44 @@
       color: white;
       overflow: hidden;
     }
+
+    #page-content {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+#page-content.fade-in {
+  opacity: 1;
+}
+
+#page-content.fade-out {
+  opacity: 0;
+}
+
+    #top-nav {
+  text-align: center;
+  margin: 15px 0 0 0;
+  z-index: 2;
+  position: relative;
+  user-select: none;
+}
+
+#go-home-btn {
+  padding: 10px 30px;
+  font-size: 16px;
+  background: black;
+  border: 1px solid white;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+#go-home-btn:hover {
+  background: #111;
+  box-shadow: 0 0 10px white;
+}
+
 
     #chat-container {
       max-width: 700px;
@@ -88,7 +127,10 @@
 <body>
   <canvas id="background-canvas"></canvas>
   <canvas id="tactical-lines-canvas"></canvas>
-
+  <div id="top-nav">
+  <button id="go-home-btn">Go to Homepage</button>
+</div>
+<div id="page-content">
   <div id="chat-container">
     <div id="chat-log"></div>
     <form id="chat-form">
@@ -97,6 +139,7 @@
       <button id="send-btn" type="submit">Send</button>
       <button id="clear-btn" type="button" style="display: none;">Clear All Messages</button>
     </form>
+  </div>
   </div>
 
   <script type="module">
@@ -308,6 +351,23 @@
       requestAnimationFrame(animateLines);
     }
     animateLines();
+    const pageContent = document.getElementById('page-content');
+
+// Fade in on page load
+window.addEventListener('load', () => {
+  pageContent.classList.add('fade-in');
+});
+
+// Fade out on button click, then navigate
+document.getElementById('go-home-btn').addEventListener('click', (e) => {
+  e.preventDefault();
+  pageContent.classList.remove('fade-in');
+  pageContent.classList.add('fade-out');
+  setTimeout(() => {
+    window.location.href = 'main.html';
+  }, 600); // Match transition duration
+});
+
   </script>
   <script>
         document.addEventListener('contextmenu', e => e.preventDefault());
