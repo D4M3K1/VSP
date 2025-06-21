@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>VSF Community Feed</title>
+<title>VSF Community Feed with Comments</title>
 <style>
   html, body {
     margin: 0; padding: 0; height: 100%;
@@ -18,17 +18,27 @@
     margin-top: 20px;
     user-select: none;
   }
+
   #post-form {
-    max-width: 600px;
+    max-width: 700px;
     margin: 20px auto;
     background: rgba(0,0,0,0.6);
     padding: 20px;
     border-radius: 10px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-start;
   }
-  #post-form label {
-    display: block;
-    margin-top: 10px;
+
+  #post-type-container {
+    flex: 0 0 150px;
+    display: flex;
+    flex-direction: column;
+  }
+  #post-type-container label {
     font-weight: bold;
+    margin-bottom: 10px;
   }
   #post-type {
     width: 100%;
@@ -38,10 +48,29 @@
     color: white;
     border-radius: 5px;
   }
+
+  #post-fields {
+    flex: 1 1 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #article-fields,
+  #media-url-field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #article-fields label,
+  #media-url-field label {
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
   input[type="text"], textarea {
     width: 100%;
     padding: 10px;
-    margin-top: 6px;
     background: #111;
     border: 1px solid white;
     color: white;
@@ -51,8 +80,10 @@
   textarea {
     height: 100px;
   }
+
   #post-submit {
-    margin-top: 15px;
+    align-self: flex-start;
+    margin-top: 10px;
     padding: 12px 25px;
     background: black;
     border: 1px solid white;
@@ -66,8 +97,9 @@
     background: #111;
     box-shadow: 0 0 10px white;
   }
+
   #feed {
-    max-width: 650px;
+    max-width: 700px;
     margin: 20px auto;
     overflow-y: auto;
     height: 60vh;
@@ -174,6 +206,20 @@
   #tactical-lines-canvas {
     z-index: 1;
   }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    #post-form {
+      flex-direction: column;
+    }
+    #post-type-container {
+      flex: none;
+      width: 100%;
+    }
+    #post-fields {
+      width: 100%;
+    }
+  }
 </style>
 </head>
 <body>
@@ -184,26 +230,30 @@
   <div id="header">VSF COMMUNITY FEED</div>
 
   <form id="post-form">
-    <label for="post-type">Select Post Type</label>
-    <select id="post-type" name="post-type" required>
-      <option value="article">Article</option>
-      <option value="image">Image URL</option>
-      <option value="video">Video URL</option>
-    </select>
-
-    <div id="article-fields">
-      <label for="article-title">Title</label>
-      <input type="text" id="article-title" name="article-title" maxlength="100" placeholder="Article Title" />
-      <label for="article-body">Body</label>
-      <textarea id="article-body" name="article-body" maxlength="2000" placeholder="Write your article here..."></textarea>
+    <div id="post-type-container">
+      <label for="post-type">Select Post Type</label>
+      <select id="post-type" name="post-type" required>
+        <option value="article">Article</option>
+        <option value="image">Image URL</option>
+        <option value="video">Video URL</option>
+      </select>
     </div>
 
-    <div id="media-url-field" style="display:none;">
-      <label for="media-url">Media URL</label>
-      <input type="text" id="media-url" name="media-url" placeholder="Paste direct image or video URL here" />
-    </div>
+    <div id="post-fields">
+      <div id="article-fields">
+        <label for="article-title">Title</label>
+        <input type="text" id="article-title" name="article-title" maxlength="100" placeholder="Article Title" />
+        <label for="article-body">Body</label>
+        <textarea id="article-body" name="article-body" maxlength="2000" placeholder="Write your article here..."></textarea>
+      </div>
 
-    <button type="submit" id="post-submit">Post</button>
+      <div id="media-url-field" style="display:none;">
+        <label for="media-url">Media URL</label>
+        <input type="text" id="media-url" name="media-url" placeholder="Paste direct image or video URL here" />
+      </div>
+
+      <button type="submit" id="post-submit">Post</button>
+    </div>
   </form>
 
   <div id="feed"></div>
@@ -211,7 +261,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
     import {
-      getDatabase, ref, push, onChildAdded, onValue, serverTimestamp
+      getDatabase, ref, push, onChildAdded, onValue
     } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
     const firebaseConfig = {
@@ -240,11 +290,11 @@
     postTypeSelect.addEventListener('change', () => {
       const val = postTypeSelect.value;
       if(val === 'article') {
-        articleFields.style.display = 'block';
+        articleFields.style.display = 'flex';
         mediaUrlField.style.display = 'none';
       } else {
         articleFields.style.display = 'none';
-        mediaUrlField.style.display = 'block';
+        mediaUrlField.style.display = 'flex';
         document.getElementById('media-url').placeholder = val === 'image' ? 'Paste direct image URL here' : 'Paste direct video URL here';
       }
     });
