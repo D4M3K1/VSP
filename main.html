@@ -46,20 +46,20 @@
 
     #chat-form {
       display: flex;
-      gap: 10px;
+      flex-direction: column;
     }
 
     #chat-input {
-      flex: 1;
       padding: 10px;
       font-size: 16px;
       background: #111;
       border: 1px solid white;
       color: white;
       border-radius: 5px;
+      margin-bottom: 10px;
     }
 
-    #send-btn {
+    #send-btn, #clear-btn {
       padding: 10px 20px;
       font-size: 16px;
       background: black;
@@ -68,9 +68,10 @@
       border-radius: 5px;
       cursor: pointer;
       transition: all 0.3s ease-in-out;
+      margin-top: 10px;
     }
 
-    #send-btn:hover {
+    #send-btn:hover, #clear-btn:hover {
       background: #111;
       box-shadow: 0 0 10px white;
     }
@@ -82,14 +83,6 @@
       pointer-events: none;
       z-index: 0;
     }
-
-    #background-canvas {
-      z-index: 0;
-    }
-
-    #tactical-lines-canvas {
-      z-index: 1;
-    }
   </style>
 </head>
 <body>
@@ -100,60 +93,103 @@
     <div id="chat-log"></div>
     <form id="chat-form">
       <input type="text" id="chat-input" placeholder="Type your message..." required autocomplete="off" />
+      <div id="typing-indicator" style="margin-top:10px; font-style: italic;"></div>
       <button id="send-btn" type="submit">Send</button>
+      <button id="clear-btn" type="button" style="display: none;">Clear All Messages</button>
     </form>
   </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-  import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getDatabase, ref, push, onChildAdded, onValue, get, remove, set } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCMQh6NcBxIpNpM9J7ULGtjMukYGx4GyKg",
-    authDomain: "vs-forces.firebaseapp.com",
-    databaseURL: "https://vs-forces-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "vs-forces",
-    storageBucket: "vs-forces.firebasestorage.app",
-    messagingSenderId: "484336329710",
-    appId: "1:484336329710:web:99f7f1d9ae0591571ea4ff",
-    measurementId: "G-8PPXXCTFSQ"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyCMQh6NcBxIpNpM9J7ULGtjMukYGx4GyKg",
+      authDomain: "vs-forces.firebaseapp.com",
+      databaseURL: "https://vs-forces-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "vs-forces",
+      storageBucket: "vs-forces.appspot.com",
+      messagingSenderId: "484336329710",
+      appId: "1:484336329710:web:99f7f1d9ae0591571ea4ff",
+      measurementId: "G-8PPXXCTFSQ"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-  const chatLog = document.getElementById('chat-log');
-  const chatForm = document.getElementById('chat-form');
-  const chatInput = document.getElementById('chat-input');
-  const userId = `User #${Math.floor(Math.random() * 9000 + 1000)}`;
+    const chatLog = document.getElementById('chat-log');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const clearBtn = document.getElementById('clear-btn');
 
-  chatForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const message = chatInput.value.trim();
-    if (!message) return;
+    // Check if this client is creator — set this manually once in console:
+    // localStorage.setItem("creator", "true");
+    const isCreator = localStorage.getItem("creator") === "true";
+    const userId = isCreator ? "Ø" : `User #${Math.floor(Math.random() * 9000 + 1000)}`;
 
-    push(ref(db, 'messages'), {
-      user: userId,
-      text: message,
-      time: Date.now()
+    if (isCreator) {
+      clearBtn.style.display = 'block';
+      clearBtn.addEventListener('click', () => {
+        if (confirm("Are you sure you want to delete all messages?")) {
+          remove(ref(db, 'messages'));
+        }
+      });
+    }
+
+    chatForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const message = chatInput.value.trim();
+      if (!message) return;
+
+      push(ref(db, 'messages'), {
+        user: userId,
+        text: message,
+        time: Date.now()
+      });
+
+      chatInput.value = '';
+      remove(ref(db, 'typing'));
     });
 
-    chatInput.value = '';
-  });
+    onChildAdded(ref(db, 'messages'), snapshot => {
+      const msg = snapshot.val();
+      const div = document.createElement('div');
+      div.className = 'message';
+      div.innerHTML = `<span class="user">${msg.user}:</span> ${msg.text}`;
+      chatLog.appendChild(div);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    });
 
-  onChildAdded(ref(db, 'messages'), snapshot => {
-    const msg = snapshot.val();
-    const div = document.createElement('div');
-    div.className = 'message';
-    div.innerHTML = `<span class="user">${msg.user}:</span> ${msg.text}`;
-    chatLog.appendChild(div);
-    chatLog.scrollTop = chatLog.scrollHeight;
-  });
-</script>
+    chatInput.addEventListener('input', () => {
+      if (chatInput.value.length > 0) {
+        set(ref(db, 'typing'), userId);
+      } else {
+        remove(ref(db, 'typing'));
+      }
+    });
 
+    chatInput.addEventListener('blur', () => remove(ref(db, 'typing')));
 
+    onValue(ref(db, 'typing'), snapshot => {
+      const typingUser = snapshot.val();
+      typingIndicator.textContent = typingUser && typingUser !== userId ? `${typingUser} is typing...` : '';
+    });
 
-  <!-- Reuse same VSF particle background -->
+    // Auto delete messages older than 20 minutes (1200000 ms)
+    setInterval(() => {
+      const twentyMinutesAgo = Date.now() - 1200000;
+      get(ref(db, 'messages')).then(snapshot => {
+        snapshot.forEach(child => {
+          if (child.val().time < twentyMinutesAgo) {
+            remove(ref(db, `messages/${child.key}`));
+          }
+        });
+      });
+    }, 120000); // check every 2 minutes
+
+  </script>
+
   <script>
     const bgCanvas = document.getElementById('background-canvas');
     const bgCtx = bgCanvas.getContext('2d');
@@ -171,7 +207,6 @@
       constructor() {
         this.reset();
       }
-
       reset() {
         this.x = Math.random() * bgCanvas.width;
         this.y = Math.random() * bgCanvas.height;
@@ -179,15 +214,10 @@
         this.speedY = Math.random() * 0.5 + 0.2;
         this.alpha = Math.random() * 0.5 + 0.3;
       }
-
       update() {
         this.y -= this.speedY;
-        if (this.y < -this.radius) {
-          this.y = bgCanvas.height + this.radius;
-          this.x = Math.random() * bgCanvas.width;
-        }
+        if (this.y < -this.radius) this.reset();
       }
-
       draw() {
         bgCtx.beginPath();
         bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
@@ -196,23 +226,14 @@
       }
     }
 
-    for (let i = 0; i < 150; i++) {
-      bgParticles.push(new BgParticle());
-    }
-
+    for (let i = 0; i < 150; i++) bgParticles.push(new BgParticle());
     function animateBgParticles() {
       bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-      bgParticles.forEach(p => {
-        p.update();
-        p.draw();
-      });
+      bgParticles.forEach(p => { p.update(); p.draw(); });
       requestAnimationFrame(animateBgParticles);
     }
-
     animateBgParticles();
-  </script>
 
-  <script>
     const linesCanvas = document.getElementById('tactical-lines-canvas');
     const linesCtx = linesCanvas.getContext('2d');
     let lines = [];
@@ -221,7 +242,6 @@
       linesCanvas.width = window.innerWidth;
       linesCanvas.height = window.innerHeight;
     }
-
     resizeLinesCanvas();
     window.addEventListener('resize', resizeLinesCanvas);
 
@@ -229,7 +249,6 @@
       constructor() {
         this.reset();
       }
-
       reset() {
         this.x = Math.random() * linesCanvas.width;
         this.y = Math.random() * linesCanvas.height;
@@ -240,18 +259,15 @@
         this.angle = Math.random() * Math.PI * 2;
         this.angularSpeed = (Math.random() - 0.5) * 0.01;
       }
-
       update() {
         this.x += this.speedX;
         this.y += this.speedY;
         this.angle += this.angularSpeed;
-
         if (this.x < -this.length) this.x = linesCanvas.width + this.length;
         if (this.x > linesCanvas.width + this.length) this.x = -this.length;
         if (this.y < -this.length) this.y = linesCanvas.height + this.length;
         if (this.y > linesCanvas.height + this.length) this.y = -this.length;
       }
-
       draw() {
         linesCtx.save();
         linesCtx.translate(this.x, this.y);
@@ -266,19 +282,12 @@
       }
     }
 
-    for (let i = 0; i < 40; i++) {
-      lines.push(new Line());
-    }
-
+    for (let i = 0; i < 40; i++) lines.push(new Line());
     function animateLines() {
       linesCtx.clearRect(0, 0, linesCanvas.width, linesCanvas.height);
-      lines.forEach(line => {
-        line.update();
-        line.draw();
-      });
+      lines.forEach(line => { line.update(); line.draw(); });
       requestAnimationFrame(animateLines);
     }
-
     animateLines();
   </script>
 </body>
