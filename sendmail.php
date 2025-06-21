@@ -1,6 +1,6 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $to = "ryojiithangkhiew@email.com";  // ← Replace with your actual email address
+    $to = "ryojiithangkhiew@gmail.com";  // ← Replace with your actual email address
     $subject = "New VSF Application";
 
     $name = htmlspecialchars(string: $_POST["fullName"]);
@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     Motivation:\n$motivation
     ";
 
-    $headers = "ryojiithangkhiew@email.com\r\n";  // ← Optional: change domain
+    $headers = "ryojiithangkhiew@gmail.com\r\n";  // ← Optional: change domain
     $headers .= "Reply-To: $email\r\n";
 
     if (mail(to: $to, subject: $subject, message: $message, additional_headers: $headers)) {
