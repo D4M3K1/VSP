@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>VSF Application Form</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0f0f0f 0%, #1c1c1c 100%);
+      color: white;
+    }
+
+    body {
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    body.fade-in {
+      opacity: 1;
+    }
+
+    #app-container {
+      position: relative;
+      z-index: 2;
+      max-width: 400px;
+      margin: 80px auto 40px auto;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px 40px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.1);
+      user-select: none;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: bold;
+      font-size: 40px;
+      letter-spacing: 6px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: 1.5px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      border: 1px solid white;
+      background-color: #111;
+      color: white;
+      font-size: 16px;
+      font-family: Arial, sans-serif;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #ccc;
+      background-color: #222;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    button.submit-btn {
+      display: block;
+      width: 100%;
+      height: 50px;
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+      background-color: black;
+      border: 1px solid white;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.4s ease-in-out;
+      box-shadow: 0 0 0 transparent;
+      animation: pulseGlow 3s infinite;
+      user-select: none;
+    }
+
+    button.submit-btn:hover {
+      background-color: #111;
+      transform: scale(1.05);
+      box-shadow: 0 0 15px white;
+      border-color: #ccc;
+      animation-play-state: paused;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.4);
+      }
+      50% {
+        box-shadow: 0 0 20px 6px rgba(255, 255, 255, 0.8);
+      }
+    }
+
+    /* Canvas layers */
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    #background-canvas {
+      z-index: 0;
+    }
+
+    #tactical-lines-canvas {
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app-container">
+    <h1>Application Form</h1>
+    <form id="application-form" action="https://formspree.io/f/xblyakar" method="POST" novalidate>
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" name="fullName" required placeholder="John Doe" />
+
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required placeholder="email@example.com" />
+
+        <label for="age">Age</label>
+        <input type="number" id="age" name="age" min="16" max="99" required placeholder="18" />
+
+        <label for="experience">Experience in combat (years)</label>
+        <input type="number" id="experience" name="experience" min="0" max="50" required placeholder="2" />
+
+        <label for="motivation">Why do you want to join?</label>
+        <textarea id="motivation" name="motivation" required placeholder="Tell us your motivation..."></textarea>
+
+        <button type="submit" class="submit-btn">Submit Application</button>
+    </form>
+  </div>
+
+  <canvas id="background-canvas"></canvas>
+  <canvas id="tactical-lines-canvas"></canvas>
+
+  <script>
+    // === Background Floating Particles ===
+    const bgCanvas = document.getElementById('background-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    let bgParticles = [];
+
+    function resizeBgCanvas() {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+    }
+
+    resizeBgCanvas();
+    window.addEventListener('resize', resizeBgCanvas);
+
+    class BgParticle {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * bgCanvas.width;
+        this.y = Math.random() * bgCanvas.height;
+        this.radius = Math.random() * 2 + 0.5;
+        this.speedY = Math.random() * 0.5 + 0.2;
+        this.alpha = Math.random() * 0.5 + 0.3;
+      }
+
+      update() {
+        this.y -= this.speedY;
+        if (this.y < -this.radius) {
+          this.y = bgCanvas.height + this.radius;
+          this.x = Math.random() * bgCanvas.width;
+        }
+      }
+
+      draw() {
+        bgCtx.beginPath();
+        bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        bgCtx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+        bgCtx.fill();
+      }
+    }
+
+    for (let i = 0; i < 150; i++) {
+      bgParticles.push(new BgParticle());
+    }
+
+    function animateBgParticles() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      bgParticles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateBgParticles);
+    }
+
+    animateBgParticles();
+  </script>
+
+  <script>
+    // === Tactical Lines Animation ===
+    const linesCanvas = document.getElementById('tactical-lines-canvas');
+    const linesCtx = linesCanvas.getContext('2d');
+    let lines = [];
+
+    function resizeLinesCanvas() {
+      linesCanvas.width = window.innerWidth;
+      linesCanvas.height = window.innerHeight;
+    }
+
+    resizeLinesCanvas();
+    window.addEventListener('resize', resizeLinesCanvas);
+
+    class Line {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * linesCanvas.width;
+        this.y = Math.random() * linesCanvas.height;
+        this.length = Math.random() * 100 + 50;
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.3 + 0.1;
+        this.angle = Math.random() * Math.PI * 2;
+        this.angularSpeed = (Math.random() - 0.5) * 0.01;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.angle += this.angularSpeed;
+
+        if (this.x < -this.length) this.x = linesCanvas.width + this.length;
+        if (this.x > linesCanvas.width + this.length) this.x = -this.length;
+        if (this.y < -this.length) this.y = linesCanvas.height + this.length;
+        if (this.y > linesCanvas.height + this.length) this.y = -this.length;
+      }
+
+      draw() {
+        linesCtx.save();
+        linesCtx.translate(this.x, this.y);
+        linesCtx.rotate(this.angle);
+        linesCtx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        linesCtx.lineWidth = 1;
+        linesCtx.beginPath();
+        linesCtx.moveTo(-this.length / 2, 0);
+        linesCtx.lineTo(this.length / 2, 0);
+        linesCtx.stroke();
+        linesCtx.restore();
+      }
+    }
+
+    for (let i = 0; i < 40; i++) {
+      lines.push(new Line());
+    }
+
+    function animateLines() {
+      linesCtx.clearRect(0, 0, linesCanvas.width, linesCanvas.height);
+      lines.forEach(line => {
+        line.update();
+        line.draw();
+      });
+      requestAnimationFrame(animateLines);
+    }
+
+    animateLines();
+
+    // --- Form submission handling ---
+    const form = document.getElementById('application-form');
+    const appContainer = document.getElementById('app-container');
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      showSuccessMessage();
+    });
+
+    function showSuccessMessage() {
+      appContainer.innerHTML = `
+        <h1 style="
+          text-align: center;
+          color: #00ff99;
+          text-shadow: 0 0 10px #00ff99, 0 0 20px #00ff99;
+          font-size: 42px;
+          letter-spacing: 6px;
+          user-select: none;
+        ">Application Submitted!</h1>
+        <p style="text-align:center; font-size:18px; margin-top: 20px;">
+          Thank you for applying. We will get back to you soon.
+        </p>
+      `;
+    }
+  </script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      document.body.classList.add('fade-in');
+    });
+</script>
+
+</body>
+</html>

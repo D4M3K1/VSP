@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>VINES SPECIAL FORCES</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0f0f0f 0%, #1c1c1c 100%);
+      color: white;
+    }
+
+    body.fade-out {
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    #logo_container {
+      text-align: center;
+      top: 400px;
+      font-size: 80px;
+      z-index: 2;
+      position: relative;
+      margin: 20px auto 0 auto;
+      width: fit-content;
+      user-select: none;
+    }
+
+    .join-the-community1 {
+      position: absolute;
+      left: 880px;
+      top: 600px;
+      height: 50px;
+      width: 150px;
+      cursor: pointer;
+      font-size: 20px;
+      color: white;
+      background-color: black;
+      border: 1px solid white;
+      z-index: 2;
+      transition: all 0.4s ease-in-out;
+      box-shadow: 0 0 0 transparent;
+      user-select: none;
+      animation: pulseGlow 3s infinite;
+    }
+
+    .join-the-community1:hover {
+      background-color: #111;
+      transform: scale(1.1);
+      box-shadow: 0 0 15px white;
+      border-color: #ccc;
+      animation-play-state: paused;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.4);
+      }
+      50% {
+        box-shadow: 0 0 20px 6px rgba(255, 255, 255, 0.8);
+      }
+    }
+
+    /* Canvas layers */
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    #background-canvas {
+      z-index: 0;
+    }
+
+    #tactical-lines-canvas {
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+   <div id="logo-container" style="text-align:center; margin-top: 80px; z-index:2; position: relative; user-select:none;">
+  <svg
+    width="180"
+    height="180"
+    viewBox="0 0 180 180"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <!-- Outer Circle -->
+    <circle cx="90" cy="90" r="85" stroke="white" stroke-width="6"/>
+    <!-- Inner ring -->
+    <circle cx="90" cy="90" r="65" stroke="white" stroke-width="2" />
+    
+    <!-- Three arrows pointing inward, rotated by 120deg -->
+    <g transform="translate(90,90)">
+      <polygon points="0,-50 20,0 -20,0" fill="white"/>
+      <polygon points="0,-50 20,0 -20,0" fill="white" transform="rotate(120)"/>
+      <polygon points="0,-50 20,0 -20,0" fill="white" transform="rotate(240)"/>
+    </g>
+    
+    <!-- Center circle -->
+    <circle cx="90" cy="90" r="10" fill="white"/>
+  </svg>
+
+  <div style="color:white; font-family: Arial, sans-serif; font-weight: bold; font-size: 36px; margin-top: 15px; letter-spacing: 6px;">
+    VSF
+  </div>
+</div>
+
+  <button class="join-the-community1" id="join-btn">JOIN</button>
+  <canvas id="background-canvas"></canvas>
+  <canvas id="tactical-lines-canvas"></canvas>
+
+  <script>
+    // === Background Floating Particles ===
+    const bgCanvas = document.getElementById('background-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    let bgParticles = [];
+
+    function resizeBgCanvas() {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+    }
+
+    resizeBgCanvas();
+    window.addEventListener('resize', resizeBgCanvas);
+
+    class BgParticle {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * bgCanvas.width;
+        this.y = Math.random() * bgCanvas.height;
+        this.radius = Math.random() * 2 + 0.5;
+        this.speedY = Math.random() * 0.5 + 0.2;
+        this.alpha = Math.random() * 0.5 + 0.3;
+      }
+
+      update() {
+        this.y -= this.speedY;
+        if (this.y < -this.radius) {
+          this.y = bgCanvas.height + this.radius;
+          this.x = Math.random() * bgCanvas.width;
+        }
+      }
+
+      draw() {
+        bgCtx.beginPath();
+        bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        bgCtx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+        bgCtx.fill();
+      }
+    }
+
+    for (let i = 0; i < 150; i++) {
+      bgParticles.push(new BgParticle());
+    }
+
+    function animateBgParticles() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      bgParticles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateBgParticles);
+    }
+
+    animateBgParticles();
+  </script>
+
+  <script>
+    // === Tactical Lines Animation ===
+    const linesCanvas = document.getElementById('tactical-lines-canvas');
+    const linesCtx = linesCanvas.getContext('2d');
+    let lines = [];
+
+    function resizeLinesCanvas() {
+      linesCanvas.width = window.innerWidth;
+      linesCanvas.height = window.innerHeight;
+    }
+
+    resizeLinesCanvas();
+    window.addEventListener('resize', resizeLinesCanvas);
+
+    class Line {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * linesCanvas.width;
+        this.y = Math.random() * linesCanvas.height;
+        this.length = Math.random() * 100 + 50;
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.3 + 0.1;
+        this.angle = Math.random() * Math.PI * 2;
+        this.angularSpeed = (Math.random() - 0.5) * 0.01;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.angle += this.angularSpeed;
+
+        if (this.x < -this.length) this.x = linesCanvas.width + this.length;
+        if (this.x > linesCanvas.width + this.length) this.x = -this.length;
+        if (this.y < -this.length) this.y = linesCanvas.height + this.length;
+        if (this.y > linesCanvas.height + this.length) this.y = -this.length;
+      }
+
+      draw() {
+        linesCtx.save();
+        linesCtx.translate(this.x, this.y);
+        linesCtx.rotate(this.angle);
+        linesCtx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        linesCtx.lineWidth = 1;
+        linesCtx.beginPath();
+        linesCtx.moveTo(-this.length / 2, 0);
+        linesCtx.lineTo(this.length / 2, 0);
+        linesCtx.stroke();
+        linesCtx.restore();
+      }
+    }
+
+    for (let i = 0; i < 40; i++) {
+      lines.push(new Line());
+    }
+
+    function animateLines() {
+      linesCtx.clearRect(0, 0, linesCanvas.width, linesCanvas.height);
+      lines.forEach(line => {
+        line.update();
+        line.draw();
+      });
+      requestAnimationFrame(animateLines);
+    }
+
+    animateLines();
+    
+  </script>
+  <script>
+      const joinBtn = document.getElementById('join-btn');
+      joinBtn.addEventListener('click', function (e) {
+      e.preventDefault(); // prevent instant navigation
+      document.body.classList.add('fade-out');
+
+      setTimeout(() => {
+        window.location.href = 'application.html';
+      }, 800); // matches the transition duration
+    });
+  </script>
+
+
+</body>
+</html>
