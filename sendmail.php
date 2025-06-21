@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     Motivation:\n$motivation
     ";
 
-    $headers = "From: no-reply@yourdomain.com\r\n";  // ← Optional: change domain
+    $headers = "ryojiithangkhiew@email.com\r\n";  // ← Optional: change domain
     $headers .= "Reply-To: $email\r\n";
 
     if (mail(to: $to, subject: $subject, message: $message, additional_headers: $headers)) {
