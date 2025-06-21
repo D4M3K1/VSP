@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>VSF Homepage</title>
+<title>Home</title>
 <style>
   html, body {
     margin: 0; padding: 0; height: 100%;
@@ -12,22 +12,84 @@
     overflow: hidden;
     user-select: none;
   }
+
+  #blur-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.7);
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #password-box {
+    background: black;
+    border: 1px solid white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  #password-box h2 {
+    margin-bottom: 15px;
+    font-size: 22px;
+  }
+
+  #password-input {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid white;
+    background: #111;
+    color: white;
+    margin-bottom: 15px;
+    width: 200px;
+  }
+
+  #password-submit {
+    padding: 10px 20px;
+    background: black;
+    border: 1px solid white;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  #password-submit:hover {
+    background: #111;
+    box-shadow: 0 0 10px white;
+  }
+
+  #access-denied {
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
+  }
+
   #page-content {
     opacity: 0;
     transition: opacity 0.6s ease;
   }
+
   #page-content.fade-in {
     opacity: 1;
   }
+
   #page-content.fade-out {
     opacity: 0;
   }
+
   #header {
     text-align: center;
     font-size: 60px;
     font-weight: bold;
     margin-top: 20px;
   }
+
   #nav-buttons {
     max-width: 700px;
     margin: 20px auto;
@@ -35,6 +97,7 @@
     justify-content: center;
     gap: 30px;
   }
+
   .nav-btn {
     padding: 15px 40px;
     background: black;
@@ -45,10 +108,12 @@
     border-radius: 8px;
     transition: all 0.3s ease-in-out;
   }
+
   .nav-btn:hover {
     background: #111;
     box-shadow: 0 0 12px white;
   }
+
   #posts-container {
     max-width: 700px;
     margin: 20px auto;
@@ -59,151 +124,186 @@
     padding: 15px 25px;
     box-shadow: 0 0 15px rgba(255,255,255,0.1);
   }
+
   .post {
     border-bottom: 1px solid #333;
     padding: 15px 0;
   }
+
   .post:last-child {
     border-bottom: none;
   }
+
   .post-user {
     color: #00ffcc;
     font-weight: bold;
     user-select: none;
   }
+
   .post-time {
     color: #888;
     font-size: 12px;
     user-select: none;
     margin-bottom: 6px;
   }
+
   .post-title {
     font-size: 18px;
     font-weight: bold;
     margin: 8px 0 6px 0;
   }
+
   .post-body {
     white-space: pre-wrap;
     margin-bottom: 10px;
   }
+
   .post img {
     max-width: 100%;
     border-radius: 5px;
   }
+
   canvas {
     position: fixed;
     top: 0; left: 0;
     pointer-events: none;
     z-index: 0;
   }
-  #background-canvas {
-    z-index: 0;
-  }
-  #tactical-lines-canvas {
-    z-index: 1;
-  }
+
+  #background-canvas { z-index: 0; }
+  #tactical-lines-canvas { z-index: 1; }
 </style>
 </head>
 <body>
 
-  <canvas id="background-canvas"></canvas>
-  <canvas id="tactical-lines-canvas"></canvas>
-
-  <div id="page-content">
-    <div id="header">VSF COMMUNITY</div>
-
-    <div id="nav-buttons">
-      <button class="nav-btn" id="go-chat">Go to Chat</button>
-      <button class="nav-btn" id="go-feed">Go to Feed</button>
-    </div>
-
-    <div id="posts-container"></div>
+<div id="blur-overlay">
+  <div id="password-box">
+    <h2>Enter Access Password</h2>
+    <input type="password" id="password-input" placeholder="Enter password" />
+    <br />
+    <button id="password-submit">Unlock</button>
+    <div id="access-denied"></div>
   </div>
+</div>
+
+<canvas id="background-canvas"></canvas>
+<canvas id="tactical-lines-canvas"></canvas>
+
+<div id="page-content">
+  <div id="header">VSF COMMUNITY</div>
+
+  <div id="nav-buttons">
+    <button class="nav-btn" id="go-chat">Go to Chat</button>
+    <button class="nav-btn" id="go-feed">Go to Feed</button>
+  </div>
+
+  <div id="posts-container"></div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
-  <script type="module">
-    
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-    import {
-      getDatabase, ref, onChildAdded
-    } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+  import { getDatabase, ref, onChildAdded } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCMQh6NcBxIpNpM9J7ULGtjMukYGx4GyKg",
-      authDomain: "vs-forces.firebaseapp.com",
-      databaseURL: "https://vs-forces-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "vs-forces",
-      storageBucket: "vs-forces.firebasestorage.app",
-      messagingSenderId: "484336329710",
-      appId: "1:484336329710:web:99f7f1d9ae0591571ea4ff",
-      measurementId: "G-8PPXXCTFSQ"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyCMQh6NcBxIpNpM9J7ULGtjMukYGx4GyKg",
+    authDomain: "vs-forces.firebaseapp.com",
+    databaseURL: "https://vs-forces-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "vs-forces",
+    storageBucket: "vs-forces.firebasestorage.app",
+    messagingSenderId: "484336329710",
+    appId: "1:484336329710:web:99f7f1d9ae0591571ea4ff",
+    measurementId: "G-8PPXXCTFSQ"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const secretKey = 'vsf-community-secret'; // MUST MATCH feed.html
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const secretKey = 'vsf-community-secret';
 
-function decrypt(text) {
-  try {
-    return CryptoJS.AES.decrypt(text, secretKey).toString(CryptoJS.enc.Utf8);
-  } catch (e) {
-    return '[Decryption Error]';
+  function decrypt(text) {
+    try {
+      return CryptoJS.AES.decrypt(text, secretKey).toString(CryptoJS.enc.Utf8);
+    } catch (e) {
+      return '[Decryption Error]';
+    }
   }
-}
 
-    const postsContainer = document.getElementById('posts-container');
+  const postsContainer = document.getElementById('posts-container');
 
-    function formatTime(ts) {
-      return new Date(ts).toLocaleString();
+  function formatTime(ts) {
+    return new Date(ts).toLocaleString();
+  }
+
+  function createPostPreview(postData) {
+    const div = document.createElement('div');
+    div.classList.add('post');
+
+    const userDiv = document.createElement('div');
+    userDiv.className = 'post-user';
+    userDiv.textContent = postData.user;
+    div.appendChild(userDiv);
+
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'post-time';
+    timeDiv.textContent = formatTime(postData.time);
+    div.appendChild(timeDiv);
+
+    if(postData.type === 'article') {
+      const titleDiv = document.createElement('div');
+      titleDiv.className = 'post-title';
+      titleDiv.textContent = decrypt(postData.title);
+      div.appendChild(titleDiv);
+
+      const bodyDiv = document.createElement('div');
+      bodyDiv.className = 'post-body';
+      const fullBody = decrypt(postData.body);
+      const snippet = fullBody.length > 150 ? fullBody.slice(0, 147) + '...' : fullBody;
+      bodyDiv.textContent = snippet;
+      div.appendChild(bodyDiv);
+    } else if(postData.type === 'image') {
+      const img = document.createElement('img');
+      img.src = decrypt(postData.url);
+      img.alt = 'User image post';
+      img.loading = 'lazy';
+      div.appendChild(img);
     }
 
-    function createPostPreview(postData) {
-  const div = document.createElement('div');
-  div.classList.add('post');
-
-  const userDiv = document.createElement('div');
-  userDiv.className = 'post-user';
-  userDiv.textContent = postData.user;
-  div.appendChild(userDiv);
-
-  const timeDiv = document.createElement('div');
-  timeDiv.className = 'post-time';
-  timeDiv.textContent = formatTime(postData.time);
-  div.appendChild(timeDiv);
-
-  if(postData.type === 'article') {
-    const titleDiv = document.createElement('div');
-    titleDiv.className = 'post-title';
-    titleDiv.textContent = decrypt(postData.title);
-    div.appendChild(titleDiv);
-
-    const bodyDiv = document.createElement('div');
-    bodyDiv.className = 'post-body';
-    const fullBody = decrypt(postData.body);
-    const snippet = fullBody.length > 150 ? fullBody.slice(0, 147) + '...' : fullBody;
-    bodyDiv.textContent = snippet;
-    div.appendChild(bodyDiv);
-
-  } else if(postData.type === 'image') {
-    const img = document.createElement('img');
-    img.src = decrypt(postData.url); // Important!
-    img.alt = 'User image post';
-    img.loading = 'lazy';
-    div.appendChild(img);
+    return div;
   }
 
-  return div;
-}
+  const postsRef = ref(db, 'feedPosts');
+  onChildAdded(postsRef, snapshot => {
+    const postData = snapshot.val();
+    const postEl = createPostPreview(postData);
+    postsContainer.appendChild(postEl);
+    postsContainer.scrollTop = postsContainer.scrollHeight;
+  });
+</script>
 
+<script>
+  const PASSWORD = 'AEFAEFFNF3273FHvsf'; // Set your own password
+  const passwordBox = document.getElementById('blur-overlay');
+  const input = document.getElementById('password-input');
+  const submitBtn = document.getElementById('password-submit');
+  const errorBox = document.getElementById('access-denied');
 
-    const postsRef = ref(db, 'feedPosts');
-    onChildAdded(postsRef, snapshot => {
-      const postData = snapshot.val();
-      const postEl = createPostPreview(postData);
-      postsContainer.appendChild(postEl);
-      postsContainer.scrollTop = postsContainer.scrollHeight;
-    });
-  </script>
+  if (localStorage.getItem('vsf_pass') === PASSWORD) {
+    passwordBox.style.display = 'none';
+    document.getElementById('page-content').classList.add('fade-in');
+  }
+
+  submitBtn.addEventListener('click', () => {
+    const entered = input.value.trim();
+    if (entered === PASSWORD) {
+      localStorage.setItem('vsf_pass', PASSWORD);
+      passwordBox.style.display = 'none';
+      document.getElementById('page-content').classList.add('fade-in');
+    } else {
+      errorBox.textContent = 'Access Denied';
+    }
+  });
+</script>
 
   <!-- VSF particle background and tactical lines -->
   <script>
