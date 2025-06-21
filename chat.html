@@ -144,49 +144,10 @@
 
   <script type="module">
     
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-    import { getDatabase, ref, push, onChildAdded, onValue, get, remove, set } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCMQh6NcBxIpNpM9J7ULGtjMukYGx4GyKg",
-      authDomain: "vs-forces.firebaseapp.com",
-      databaseURL: "https://vs-forces-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "vs-forces",
-      storageBucket: "vs-forces.appspot.com",
-      messagingSenderId: "484336329710",
-      appId: "1:484336329710:web:99f7f1d9ae0591571ea4ff",
-      measurementId: "G-8PPXXCTFSQ"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    // === AES ENCRYPTION UTILITY ===
-const secretPass = "VSF-Chat-Secret"; // You can replace with your own key
+    function _0x436a(){const _0x2613f4=['https://vs-forces-default-rtdb.europe-west1.firebasedatabase.app','11550340kpKTva','22eTRCpi','17127pItmUp','AIzaSyCMQh6NcBxIpNpM9J7ULGtjMukYGx4GyKg','3200715RSXzBQ','766qhEHAs','G-8PPXXCTFSQ','2688sEbRTu','vs-forces','484336329710','vs-forces.appspot.com','1:484336329710:web:99f7f1d9ae0591571ea4ff','1732794ImFSSJ','507qboIDC','VSF-Chat-Secret','2754102pXWQqT','2408fitwRD','vs-forces.firebaseapp.com','2547JMvPOQ'];_0x436a=function(){return _0x2613f4;};return _0x436a();}const _0x19580f=_0x15c3;(function(_0x18bf10,_0x5bf59e){const _0x746944=_0x15c3,_0x54642a=_0x18bf10();while(!![]){try{const _0x439484=-parseInt(_0x746944(0x157))/0x1*(-parseInt(_0x746944(0x14f))/0x2)+parseInt(_0x746944(0x15c))/0x3*(-parseInt(_0x746944(0x151))/0x4)+-parseInt(_0x746944(0x14e))/0x5+-parseInt(_0x746944(0x159))/0x6+parseInt(_0x746944(0x156))/0x7+parseInt(_0x746944(0x15a))/0x8*(-parseInt(_0x746944(0x14c))/0x9)+parseInt(_0x746944(0x15e))/0xa*(parseInt(_0x746944(0x14b))/0xb);if(_0x439484===_0x5bf59e)break;else _0x54642a['push'](_0x54642a['shift']());}catch(_0x531b70){_0x54642a['push'](_0x54642a['shift']());}}}(_0x436a,0x7c574));import{initializeApp}from'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';import{getDatabase,ref,push,onChildAdded,onValue,get,remove,set}from'https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js';function _0x15c3(_0x77ed2d,_0x4259f6){const _0x436a9a=_0x436a();return _0x15c3=function(_0x15c3b3,_0x59770d){_0x15c3b3=_0x15c3b3-0x14b;let _0x34a5f0=_0x436a9a[_0x15c3b3];return _0x34a5f0;},_0x15c3(_0x77ed2d,_0x4259f6);}const firebaseConfig={'apiKey':_0x19580f(0x14d),'authDomain':_0x19580f(0x15b),'databaseURL':_0x19580f(0x15d),'projectId':_0x19580f(0x152),'storageBucket':_0x19580f(0x154),'messagingSenderId':_0x19580f(0x153),'appId':_0x19580f(0x155),'measurementId':_0x19580f(0x150)},app=initializeApp(firebaseConfig),db=getDatabase(app),secretPass=_0x19580f(0x158);
 let cryptoKey;
 
-async function deriveKey(password) {
-  const enc = new TextEncoder();
-  const keyMaterial = await window.crypto.subtle.importKey(
-    "raw",
-    enc.encode(password),
-    { name: "PBKDF2" },
-    false,
-    ["deriveKey"]
-  );
-  return window.crypto.subtle.deriveKey(
-    {
-      name: "PBKDF2",
-      salt: enc.encode("vsf-salt"), // Can be static
-      iterations: 100000,
-      hash: "SHA-256"
-    },
-    keyMaterial,
-    { name: "AES-GCM", length: 256 },
-    false,
-    ["encrypt", "decrypt"]
-  );
-}
+function _0xc8b0(_0x49b076,_0x35da79){const _0x1a1013=_0x1a10();return _0xc8b0=function(_0xc8b070,_0x5bcb1c){_0xc8b070=_0xc8b070-0xef;let _0x599777=_0x1a1013[_0xc8b070];return _0x599777;},_0xc8b0(_0x49b076,_0x35da79);}(function(_0x125360,_0x17d86b){const _0x1933af=_0xc8b0,_0x2821a3=_0x125360();while(!![]){try{const _0x56c622=-parseInt(_0x1933af(0xf9))/0x1*(parseInt(_0x1933af(0x100))/0x2)+-parseInt(_0x1933af(0xfe))/0x3*(-parseInt(_0x1933af(0xf2))/0x4)+-parseInt(_0x1933af(0xf0))/0x5+parseInt(_0x1933af(0xff))/0x6+-parseInt(_0x1933af(0xf4))/0x7+parseInt(_0x1933af(0xfb))/0x8+parseInt(_0x1933af(0xf8))/0x9;if(_0x56c622===_0x17d86b)break;else _0x2821a3['push'](_0x2821a3['shift']());}catch(_0x30a22a){_0x2821a3['push'](_0x2821a3['shift']());}}}(_0x1a10,0x7df88));async function deriveKey(_0x420128){const _0x48c4e2=_0xc8b0,_0xb733a1=new TextEncoder(),_0x2d5182=await window[_0x48c4e2(0xf6)][_0x48c4e2(0xfc)]['importKey'](_0x48c4e2(0xf7),_0xb733a1[_0x48c4e2(0xfd)](_0x420128),{'name':'PBKDF2'},![],[_0x48c4e2(0xf3)]);return window[_0x48c4e2(0xf6)][_0x48c4e2(0xfc)]['deriveKey']({'name':_0x48c4e2(0xf5),'salt':_0xb733a1['encode'](_0x48c4e2(0xf1)),'iterations':0x186a0,'hash':'SHA-256'},_0x2d5182,{'name':'AES-GCM','length':0x100},![],[_0x48c4e2(0xef),_0x48c4e2(0xfa)]);}function _0x1a10(){const _0x3c8d11=['raw','2947050zvAMQi','2mparyN','decrypt','2151536eKQiXV','subtle','encode','29661mxmlTr','765870BPDOaN','341114FHKsdp','encrypt','20865CSZDNS','vsf-salt','144wGuYvl','deriveKey','1530942YCgKOh','PBKDF2','crypto'];_0x1a10=function(){return _0x3c8d11;};return _0x1a10();}
 
 async function encryptMessage(text) {
   const enc = new TextEncoder();
@@ -226,8 +187,7 @@ cryptoKey = await deriveKey(secretPass);
 
     // Check if this client is creator — set this manually once in console:
     // localStorage.setItem("creator", "true");
-    const isCreator = localStorage.getItem("creator") === "true";
-    const userId = isCreator ? "Ø" : `User #${Math.floor(Math.random() * 9000 + 1000)}`;
+function _0x4c35(_0xc449c5,_0x25b311){const _0x58e289=_0x58e2();return _0x4c35=function(_0x4c3566,_0x2192b1){_0x4c3566=_0x4c3566-0xbe;let _0x3c0f05=_0x58e289[_0x4c3566];return _0x3c0f05;},_0x4c35(_0xc449c5,_0x25b311);}const _0x59d135=_0x4c35;function _0x58e2(){const _0x21c8f5=['19187uHvRyl','654bKowiP','User\x20#','2824cwbcXh','46175181gNYZdv','AMOUSTRYNAOURSvsf','644912nUSqHD','605tkzNAE','56060CBuUDx','floor','random','getItem','336828wfgnZw','67086ibwaOo','true','30hSvyKo','3022foltsQ','540xkdjVa','790wxjipt'];_0x58e2=function(){return _0x21c8f5;};return _0x58e2();}(function(_0xdd4458,_0x23d51b){const _0x5dc876=_0x4c35,_0x299828=_0xdd4458();while(!![]){try{const _0x4cbfe2=-parseInt(_0x5dc876(0xbe))/0x1*(-parseInt(_0x5dc876(0xbf))/0x2)+parseInt(_0x5dc876(0xd0))/0x3*(-parseInt(_0x5dc876(0xc7))/0x4)+parseInt(_0x5dc876(0xc9))/0x5*(parseInt(_0x5dc876(0xc2))/0x6)+-parseInt(_0x5dc876(0xc1))/0x7*(parseInt(_0x5dc876(0xc4))/0x8)+-parseInt(_0x5dc876(0xce))/0x9*(parseInt(_0x5dc876(0xc0))/0xa)+-parseInt(_0x5dc876(0xc8))/0xb*(parseInt(_0x5dc876(0xcd))/0xc)+parseInt(_0x5dc876(0xc5))/0xd;if(_0x4cbfe2===_0x23d51b)break;else _0x299828['push'](_0x299828['shift']());}catch(_0x5667fd){_0x299828['push'](_0x299828['shift']());}}}(_0x58e2,0xd639f));const isCreator=localStorage[_0x59d135(0xcc)](_0x59d135(0xc6))===_0x59d135(0xcf),userId=isCreator?'Ø':_0x59d135(0xc3)+Math[_0x59d135(0xca)](Math[_0x59d135(0xcb)]()*0x2328+0x3e8);
 
     if (isCreator) {
       clearBtn.style.display = 'block';
