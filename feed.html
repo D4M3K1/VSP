@@ -1,178 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>VSF Feed</title>
-  <style>
-    html, body {
-      margin: 0; padding: 0; height: 100%;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
-      color: white;
-      overflow: hidden;
-    }
-    #container {
-      max-width: 800px;
-      margin: 40px auto;
-      background: rgba(0,0,0,0.6);
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.1);
-      padding: 20px;
-      height: 80vh;
-      display: flex;
-      flex-direction: column;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 15px;
-      user-select: none;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    input[type="text"], textarea {
-      width: 100%;
-      background: #111;
-      border: 1px solid white;
-      border-radius: 5px;
-      color: white;
-      padding: 8px;
-      font-size: 14px;
-      resize: vertical;
-    }
-    textarea {
-      min-height: 60px;
-      max-height: 150px;
-    }
-    select {
-      background: #111;
-      border: 1px solid white;
-      border-radius: 5px;
-      color: white;
-      padding: 8px;
-      font-size: 14px;
-      width: 150px;
-    }
-    button {
-      width: 150px;
-      cursor: pointer;
-      font-size: 16px;
-      background: black;
-      color: white;
-      border: 1px solid white;
-      border-radius: 5px;
-      transition: all 0.4s ease;
-      align-self: flex-start;
-      user-select: none;
-    }
-    button:hover {
-      background: #111;
-      box-shadow: 0 0 10px white;
-    }
-    #posts {
-      flex: 1;
-      overflow-y: auto;
-      border-top: 1px solid #444;
-      padding-top: 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    .post-card {
-      background: rgba(255,255,255,0.05);
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 0 5px rgba(255,255,255,0.1);
-    }
-    .post-header {
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #00ffcc;
-      user-select: none;
-    }
-    .post-title {
-      font-size: 18px;
-      margin-bottom: 8px;
-    }
-    .post-body {
-      font-size: 15px;
-      white-space: pre-wrap;
-      margin-bottom: 10px;
-    }
-    img, video {
-      max-width: 100%;
-      border-radius: 5px;
-      display: block;
-      margin-top: 10px;
-      background: black;
-    }
-    video {
-      max-height: 300px;
-    }
-    #clear-btn {
-      background: #800000;
-      margin-top: 10px;
-      align-self: flex-end;
-    }
-    #clear-btn:hover {
-      background: #b22222;
-      box-shadow: 0 0 12px #b22222;
-    }
+<meta charset="UTF-8" />
+<title>VSF Community Feed with Comments</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0f0f0f 0%, #1c1c1c 100%);
+    color: white;
+    overflow: hidden;
+  }
+  #header {
+    text-align: center;
+    font-size: 60px;
+    font-weight: bold;
+    margin-top: 20px;
+    user-select: none;
+  }
+  #post-form {
+    max-width: 600px;
+    margin: 20px auto;
+    background: rgba(0,0,0,0.6);
+    padding: 20px;
+    border-radius: 10px;
+  }
+  #post-form label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  #post-type {
+    width: 100%;
+    padding: 10px;
+    background: #111;
+    border: 1px solid white;
+    color: white;
+    border-radius: 5px;
+  }
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    background: #111;
+    border: 1px solid white;
+    color: white;
+    border-radius: 5px;
+    resize: vertical;
+  }
+  textarea {
+    height: 100px;
+  }
+  #post-submit {
+    margin-top: 15px;
+    padding: 12px 25px;
+    background: black;
+    border: 1px solid white;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+  }
+  #post-submit:hover {
+    background: #111;
+    box-shadow: 0 0 10px white;
+  }
+  #feed {
+    max-width: 650px;
+    margin: 20px auto;
+    overflow-y: auto;
+    height: 60vh;
+    background: rgba(0,0,0,0.6);
+    border-radius: 10px;
+    padding: 10px 20px;
+    box-shadow: 0 0 15px rgba(255,255,255,0.1);
+  }
+  .post {
+    border-bottom: 1px solid #333;
+    padding: 15px 0;
+  }
+  .post:last-child {
+    border-bottom: none;
+  }
+  .post .post-user {
+    color: #00ffcc;
+    font-weight: bold;
+    user-select: none;
+  }
+  .post .post-time {
+    color: #888;
+    font-size: 12px;
+    user-select: none;
+    margin-bottom: 8px;
+  }
+  .post .post-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 8px 0 6px 0;
+  }
+  .post .post-body {
+    white-space: pre-wrap;
+    margin-bottom: 10px;
+  }
+  .post img, .post video {
+    max-width: 100%;
+    border-radius: 5px;
+  }
+  .post video {
+    max-height: 360px;
+  }
+  .comments-container {
+    margin-top: 15px;
+    border-top: 1px solid #444;
+    padding-top: 10px;
+  }
+  .comment {
+    margin-bottom: 8px;
+    font-size: 14px;
+    border-bottom: 1px solid #222;
+    padding-bottom: 6px;
+  }
+  .comment .comment-user {
+    color: #00ffcc;
+    font-weight: bold;
+    user-select: none;
+    margin-right: 6px;
+  }
+  .comment .comment-time {
+    color: #666;
+    font-size: 11px;
+  }
+  .comment-text {
+    margin-left: 20px;
+    white-space: pre-wrap;
+  }
+  .comment-form {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+  }
+  .comment-input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid white;
+    background: #111;
+    color: white;
+  }
+  .comment-submit-btn {
+    background: black;
+    border: 1px solid white;
+    color: white;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+  }
+  .comment-submit-btn:hover {
+    background: #111;
+    box-shadow: 0 0 8px white;
+  }
 
-    /* Canvas layers */
-    canvas {
-      position: fixed;
-      top: 0; left: 0;
-      pointer-events: none;
-      z-index: 0;
-    }
-    #background-canvas { z-index: 0; }
-    #tactical-lines-canvas { z-index: 1; }
-  </style>
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  #background-canvas {
+    z-index: 0;
+  }
+  #tactical-lines-canvas {
+    z-index: 1;
+  }
+</style>
 </head>
 <body>
 
   <canvas id="background-canvas"></canvas>
   <canvas id="tactical-lines-canvas"></canvas>
 
-  <div id="container">
-    <h1>VSF Feed</h1>
+  <div id="header">VSF COMMUNITY FEED</div>
 
-    <form id="post-form">
-      <label>
-        Post Type:
-        <select id="post-type" required>
-          <option value="article">Article</option>
-          <option value="image">Image URL</option>
-          <option value="video">Video URL</option>
-        </select>
-      </label>
+  <form id="post-form">
+    <label for="post-type">Select Post Type</label>
+    <select id="post-type" name="post-type" required>
+      <option value="article">Article</option>
+      <option value="image">Image URL</option>
+      <option value="video">Video URL</option>
+    </select>
 
-      <div id="article-fields">
-        <input type="text" id="post-title" placeholder="Article Title (required)" />
-        <textarea id="post-body" placeholder="Write your article here..." rows="4"></textarea>
-      </div>
+    <div id="article-fields">
+      <label for="article-title">Title</label>
+      <input type="text" id="article-title" name="article-title" maxlength="100" placeholder="Article Title" />
+      <label for="article-body">Body</label>
+      <textarea id="article-body" name="article-body" maxlength="2000" placeholder="Write your article here..."></textarea>
+    </div>
 
-      <div id="media-fields" style="display:none;">
-        <input type="text" id="media-url" placeholder="Enter URL here" />
-      </div>
+    <div id="media-url-field" style="display:none;">
+      <label for="media-url">Media URL</label>
+      <input type="text" id="media-url" name="media-url" placeholder="Paste direct image or video URL here" />
+    </div>
 
-      <button type="submit">Post</button>
-    </form>
+    <button type="submit" id="post-submit">Post</button>
+  </form>
 
-    <button id="clear-btn" title="Clear all posts (creator only)">Clear All Posts</button>
-
-    <div id="posts"></div>
-  </div>
+  <div id="feed"></div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-    import { getDatabase, ref, push, onChildAdded, query, limitToLast, get, remove } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+    import {
+      getDatabase, ref, push, onChildAdded, onValue, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
-    // Your Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCMQh6NcBxIpNpM9J7ULGtjMukYGx4GyKg",
       authDomain: "vs-forces.firebaseapp.com",
@@ -187,140 +228,204 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Anonymous "creator" user
-    const userId = `User #${Math.floor(Math.random()*9000+1000)}`;
-
-    const postForm = document.getElementById('post-form');
     const postTypeSelect = document.getElementById('post-type');
     const articleFields = document.getElementById('article-fields');
-    const mediaFields = document.getElementById('media-fields');
-    const postTitle = document.getElementById('post-title');
-    const postBody = document.getElementById('post-body');
-    const mediaUrl = document.getElementById('media-url');
-    const postsContainer = document.getElementById('posts');
-    const clearBtn = document.getElementById('clear-btn');
+    const mediaUrlField = document.getElementById('media-url-field');
+    const postForm = document.getElementById('post-form');
+    const feed = document.getElementById('feed');
 
-    // Show/hide fields depending on post type
+    const userId = `User #${Math.floor(Math.random() * 9000 + 1000)}`;
+
+    // Toggle form fields depending on post type
     postTypeSelect.addEventListener('change', () => {
-      if(postTypeSelect.value === 'article') {
-        articleFields.style.display = 'flex';
-        mediaFields.style.display = 'none';
-        postTitle.required = true;
+      const val = postTypeSelect.value;
+      if(val === 'article') {
+        articleFields.style.display = 'block';
+        mediaUrlField.style.display = 'none';
       } else {
         articleFields.style.display = 'none';
-        mediaFields.style.display = 'block';
-        postTitle.required = false;
+        mediaUrlField.style.display = 'block';
+        document.getElementById('media-url').placeholder = val === 'image' ? 'Paste direct image URL here' : 'Paste direct video URL here';
       }
     });
+    postTypeSelect.dispatchEvent(new Event('change'));
 
+    // Submit new post
     postForm.addEventListener('submit', e => {
       e.preventDefault();
-
       const type = postTypeSelect.value;
-      const time = Date.now();
 
-      // Validate fields
-      if(type === 'article') {
-        if(!postTitle.value.trim()) {
-          alert('Article title is required!');
-          return;
-        }
-      } else {
-        if(!mediaUrl.value.trim()) {
-          alert('URL is required!');
-          return;
-        }
-      }
-
-      // Prepare post data
-      const newPost = {
+      let postData = {
         user: userId,
         type,
-        time,
+        time: Date.now()
       };
 
       if(type === 'article') {
-        newPost.title = postTitle.value.trim();
-        newPost.body = postBody.value.trim();
-      } else {
-        newPost.url = mediaUrl.value.trim();
-      }
-
-      // Push post to Firebase DB
-      push(ref(db, 'posts'), newPost);
-
-      // Reset form
-      postForm.reset();
-      postTypeSelect.dispatchEvent(new Event('change'));
-    });
-
-    // Listen for posts and render
-    const postsQuery = query(ref(db, 'posts'), limitToLast(50));
-    onChildAdded(postsQuery, snapshot => {
-      const post = snapshot.val();
-      post.key = snapshot.key;
-
-      const card = document.createElement('div');
-      card.className = 'post-card';
-
-      const header = document.createElement('div');
-      header.className = 'post-header';
-      header.textContent = post.user;
-      card.appendChild(header);
-
-      if(post.type === 'article') {
-        const title = document.createElement('div');
-        title.className = 'post-title';
-        title.textContent = post.title;
-        card.appendChild(title);
-
-        if(post.body) {
-          const body = document.createElement('div');
-          body.className = 'post-body';
-          body.textContent = post.body;
-          card.appendChild(body);
+        const title = document.getElementById('article-title').value.trim();
+        const body = document.getElementById('article-body').value.trim();
+        if(!title || !body) {
+          alert('Please enter title and body for your article.');
+          return;
         }
-      } else if(post.type === 'image') {
+        postData.title = title;
+        postData.body = body;
+      } else {
+        const url = document.getElementById('media-url').value.trim();
+        if(!url) {
+          alert('Please enter a media URL.');
+          return;
+        }
+        postData.url = url;
+      }
+
+      push(ref(db, 'feedPosts'), postData);
+
+      // Clear form
+      if(type === 'article') {
+        document.getElementById('article-title').value = '';
+        document.getElementById('article-body').value = '';
+      } else {
+        document.getElementById('media-url').value = '';
+      }
+    });
+
+    // Helper: Format timestamp
+    function formatTime(ts) {
+      return new Date(ts).toLocaleString();
+    }
+
+    // Render a single comment element
+    function renderComment(commentData) {
+      const commentDiv = document.createElement('div');
+      commentDiv.className = 'comment';
+
+      const userSpan = document.createElement('span');
+      userSpan.className = 'comment-user';
+      userSpan.textContent = commentData.user;
+
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'comment-time';
+      timeSpan.textContent = ' - ' + formatTime(commentData.time);
+
+      const textDiv = document.createElement('div');
+      textDiv.className = 'comment-text';
+      textDiv.textContent = commentData.text;
+
+      commentDiv.appendChild(userSpan);
+      commentDiv.appendChild(timeSpan);
+      commentDiv.appendChild(textDiv);
+
+      return commentDiv;
+    }
+
+    // Create a post DOM element with comments & comment form
+    function createPostElement(postKey, postData) {
+      const div = document.createElement('div');
+      div.classList.add('post');
+
+      const userDiv = document.createElement('div');
+      userDiv.className = 'post-user';
+      userDiv.textContent = postData.user;
+      div.appendChild(userDiv);
+
+      const timeDiv = document.createElement('div');
+      timeDiv.className = 'post-time';
+      timeDiv.textContent = formatTime(postData.time);
+      div.appendChild(timeDiv);
+
+      if(postData.type === 'article') {
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'post-title';
+        titleDiv.textContent = postData.title;
+        div.appendChild(titleDiv);
+
+        const bodyDiv = document.createElement('div');
+        bodyDiv.className = 'post-body';
+        bodyDiv.textContent = postData.body;
+        div.appendChild(bodyDiv);
+      } else if(postData.type === 'image') {
         const img = document.createElement('img');
-        img.src = post.url;
+        img.src = postData.url;
         img.alt = 'User image post';
-        card.appendChild(img);
-      } else if(post.type === 'video') {
-        const vid = document.createElement('video');
-        vid.src = post.url;
-        vid.controls = true;
-        card.appendChild(vid);
+        img.loading = 'lazy';
+        div.appendChild(img);
+      } else if(postData.type === 'video') {
+        const video = document.createElement('video');
+        video.src = postData.url;
+        video.controls = true;
+        video.preload = 'metadata';
+        div.appendChild(video);
       }
 
-      postsContainer.appendChild(card);
-      postsContainer.scrollTop = postsContainer.scrollHeight;
-    });
+      // Comments container
+      const commentsContainer = document.createElement('div');
+      commentsContainer.className = 'comments-container';
+      div.appendChild(commentsContainer);
 
-    // Auto-delete posts older than 20 minutes
-    setInterval(() => {
-      const cutoff = Date.now() - 20*60*1000; // 20 mins
-      get(ref(db, 'posts')).then(snapshot => {
-        snapshot.forEach(child => {
-          if(child.val().time < cutoff) {
-            remove(ref(db, `posts/${child.key}`));
-          }
-        });
+      // Comment form
+      const commentForm = document.createElement('form');
+      commentForm.className = 'comment-form';
+
+      const commentInput = document.createElement('input');
+      commentInput.type = 'text';
+      commentInput.placeholder = 'Write a comment...';
+      commentInput.className = 'comment-input';
+      commentInput.required = true;
+      commentForm.appendChild(commentInput);
+
+      const commentSubmit = document.createElement('button');
+      commentSubmit.type = 'submit';
+      commentSubmit.className = 'comment-submit-btn';
+      commentSubmit.textContent = 'Reply';
+      commentForm.appendChild(commentSubmit);
+
+      div.appendChild(commentForm);
+
+      // Load existing comments from Firebase
+      const commentsRef = ref(db, `feedPosts/${postKey}/comments`);
+      onValue(commentsRef, snapshot => {
+        commentsContainer.innerHTML = ''; // Clear current comments
+        const comments = snapshot.val();
+        if(comments) {
+          Object.entries(comments).forEach(([key, comment]) => {
+            const commentEl = renderComment(comment);
+            commentsContainer.appendChild(commentEl);
+          });
+        }
       });
-    }, 2*60*1000); // every 2 mins
 
-    // Clear all posts (only for creator)
-    clearBtn.addEventListener('click', () => {
-      if(confirm('Are you sure you want to clear all posts?')) {
-        remove(ref(db, 'posts'));
-        postsContainer.innerHTML = '';
-      }
+      // Handle new comment submit
+      commentForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const text = commentInput.value.trim();
+        if(!text) return;
+
+        const commentData = {
+          user: userId,
+          text,
+          time: Date.now()
+        };
+
+        push(ref(db, `feedPosts/${postKey}/comments`), commentData);
+        commentInput.value = '';
+      });
+
+      return div;
+    }
+
+    // Listen for new posts and add them to feed
+    const postsRef = ref(db, 'feedPosts');
+    onChildAdded(postsRef, snapshot => {
+      const postKey = snapshot.key;
+      const postData = snapshot.val();
+
+      const postEl = createPostElement(postKey, postData);
+      feed.appendChild(postEl);
+      feed.scrollTop = feed.scrollHeight;
     });
 
-    // Initialize form visibility
-    postTypeSelect.dispatchEvent(new Event('change'));
-
-
-    // === Reuse VSF background and tactical lines canvas scripts from your main.html ===
+    // === Background Floating Particles ===
     const bgCanvas = document.getElementById('background-canvas');
     const bgCtx = bgCanvas.getContext('2d');
     let bgParticles = [];
@@ -329,15 +434,11 @@
       bgCanvas.width = window.innerWidth;
       bgCanvas.height = window.innerHeight;
     }
-
     resizeBgCanvas();
     window.addEventListener('resize', resizeBgCanvas);
 
     class BgParticle {
-      constructor() {
-        this.reset();
-      }
-
+      constructor() { this.reset(); }
       reset() {
         this.x = Math.random() * bgCanvas.width;
         this.y = Math.random() * bgCanvas.height;
@@ -345,7 +446,6 @@
         this.speedY = Math.random() * 0.5 + 0.2;
         this.alpha = Math.random() * 0.5 + 0.3;
       }
-
       update() {
         this.y -= this.speedY;
         if (this.y < -this.radius) {
@@ -353,7 +453,6 @@
           this.x = Math.random() * bgCanvas.width;
         }
       }
-
       draw() {
         bgCtx.beginPath();
         bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
@@ -361,40 +460,27 @@
         bgCtx.fill();
       }
     }
-
-    for (let i = 0; i < 150; i++) {
-      bgParticles.push(new BgParticle());
-    }
-
+    for (let i = 0; i < 150; i++) bgParticles.push(new BgParticle());
     function animateBgParticles() {
       bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-      bgParticles.forEach(p => {
-        p.update();
-        p.draw();
-      });
+      bgParticles.forEach(p => { p.update(); p.draw(); });
       requestAnimationFrame(animateBgParticles);
     }
-
     animateBgParticles();
 
-
+    // === Tactical Lines Animation ===
     const linesCanvas = document.getElementById('tactical-lines-canvas');
     const linesCtx = linesCanvas.getContext('2d');
     let lines = [];
-
     function resizeLinesCanvas() {
       linesCanvas.width = window.innerWidth;
       linesCanvas.height = window.innerHeight;
     }
-
     resizeLinesCanvas();
     window.addEventListener('resize', resizeLinesCanvas);
 
     class Line {
-      constructor() {
-        this.reset();
-      }
-
+      constructor() { this.reset(); }
       reset() {
         this.x = Math.random() * linesCanvas.width;
         this.y = Math.random() * linesCanvas.height;
@@ -405,18 +491,15 @@
         this.angle = Math.random() * Math.PI * 2;
         this.angularSpeed = (Math.random() - 0.5) * 0.01;
       }
-
       update() {
         this.x += this.speedX;
         this.y += this.speedY;
         this.angle += this.angularSpeed;
-
         if (this.x < -this.length) this.x = linesCanvas.width + this.length;
         if (this.x > linesCanvas.width + this.length) this.x = -this.length;
         if (this.y < -this.length) this.y = linesCanvas.height + this.length;
         if (this.y > linesCanvas.height + this.length) this.y = -this.length;
       }
-
       draw() {
         linesCtx.save();
         linesCtx.translate(this.x, this.y);
@@ -430,43 +513,13 @@
         linesCtx.restore();
       }
     }
-
-    for (let i = 0; i < 40; i++) {
-      lines.push(new Line());
-    }
-
+    for (let i = 0; i < 40; i++) lines.push(new Line());
     function animateLines() {
       linesCtx.clearRect(0, 0, linesCanvas.width, linesCanvas.height);
-      lines.forEach(line => {
-        line.update();
-        line.draw();
-      });
+      lines.forEach(line => { line.update(); line.draw(); });
       requestAnimationFrame(animateLines);
     }
-
     animateLines();
-
   </script>
-  <script>
-        document.addEventListener('contextmenu', e => e.preventDefault());
-      document.addEventListener('keydown', e => {
-        if (
-          e.key === "F12" ||
-          (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
-          (e.ctrlKey && e.key === 'U') ||
-          (e.metaKey && e.altKey && e.key === 'I')
-        ) {
-          e.preventDefault();
-          return false;
-        }
-      });
-      setInterval(() => {
-      const widthThreshold = window.outerWidth - window.innerWidth > 100;
-      const heightThreshold = window.outerHeight - window.innerHeight > 100;
-      if (widthThreshold || heightThreshold) {
-        document.body.innerHTML = '<h1 style="color:white;text-align:center;margin-top:40vh;">Access Denied</h1>';
-      }
-    }, 1000);
-    </script>
 </body>
 </html>
