@@ -119,8 +119,10 @@
 
     <div id="posts-container"></div>
   </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
   <script type="module">
+    
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
     import {
       getDatabase, ref, onChildAdded
@@ -139,6 +141,16 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const secretKey = 'vsf-community-secret'; // MUST MATCH feed.html
+
+function decrypt(text) {
+  try {
+    return CryptoJS.AES.decrypt(text, secretKey).toString(CryptoJS.enc.Utf8);
+  } catch (e) {
+    return '[Decryption Error]';
+  }
+}
+
     const postsContainer = document.getElementById('posts-container');
 
     function formatTime(ts) {
@@ -146,40 +158,43 @@
     }
 
     function createPostPreview(postData) {
-      const div = document.createElement('div');
-      div.classList.add('post');
+  const div = document.createElement('div');
+  div.classList.add('post');
 
-      const userDiv = document.createElement('div');
-      userDiv.className = 'post-user';
-      userDiv.textContent = postData.user;
-      div.appendChild(userDiv);
+  const userDiv = document.createElement('div');
+  userDiv.className = 'post-user';
+  userDiv.textContent = postData.user;
+  div.appendChild(userDiv);
 
-      const timeDiv = document.createElement('div');
-      timeDiv.className = 'post-time';
-      timeDiv.textContent = formatTime(postData.time);
-      div.appendChild(timeDiv);
+  const timeDiv = document.createElement('div');
+  timeDiv.className = 'post-time';
+  timeDiv.textContent = formatTime(postData.time);
+  div.appendChild(timeDiv);
 
-      if(postData.type === 'article') {
-        const titleDiv = document.createElement('div');
-        titleDiv.className = 'post-title';
-        titleDiv.textContent = postData.title;
-        div.appendChild(titleDiv);
+  if(postData.type === 'article') {
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'post-title';
+    titleDiv.textContent = decrypt(postData.title);
+    div.appendChild(titleDiv);
 
-        const bodyDiv = document.createElement('div');
-        bodyDiv.className = 'post-body';
-        const snippet = postData.body.length > 150 ? postData.body.slice(0, 147) + '...' : postData.body;
-        bodyDiv.textContent = snippet;
-        div.appendChild(bodyDiv);
-      } else if(postData.type === 'image') {
-        const img = document.createElement('img');
-        img.src = postData.url;
-        img.alt = 'User image post';
-        img.loading = 'lazy';
-        div.appendChild(img);
-      }
+    const bodyDiv = document.createElement('div');
+    bodyDiv.className = 'post-body';
+    const fullBody = decrypt(postData.body);
+    const snippet = fullBody.length > 150 ? fullBody.slice(0, 147) + '...' : fullBody;
+    bodyDiv.textContent = snippet;
+    div.appendChild(bodyDiv);
 
-      return div;
-    }
+  } else if(postData.type === 'image') {
+    const img = document.createElement('img');
+    img.src = decrypt(postData.url); // Important!
+    img.alt = 'User image post';
+    img.loading = 'lazy';
+    div.appendChild(img);
+  }
+
+  return div;
+}
+
 
     const postsRef = ref(db, 'feedPosts');
     onChildAdded(postsRef, snapshot => {
