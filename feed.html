@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>VSF Community Feed with Comments</title>
+<title>VSF Community Feed</title>
 
 <style>
   html, body {
@@ -596,5 +596,26 @@ document.getElementById('go-home-btn').addEventListener('click', (e) => {
 });
 
   </script>
+  <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+      document.addEventListener('keydown', e => {
+        if (
+          e.key === "F12" ||
+          (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+          (e.ctrlKey && e.key === 'U') ||
+          (e.metaKey && e.altKey && e.key === 'I')
+        ) {
+          e.preventDefault();
+          return false;
+        }
+      });
+      setInterval(() => {
+      const widthThreshold = window.outerWidth - window.innerWidth > 100;
+      const heightThreshold = window.outerHeight - window.innerHeight > 100;
+      if (widthThreshold || heightThreshold) {
+        document.body.innerHTML = '<h1 style="color:white;text-align:center;margin-top:40vh;">Access Denied</h1>';
+      }
+    }, 1000);
+    </script>
 </body>
 </html>
