@@ -154,11 +154,29 @@
 
     onChildAdded(ref(db, 'messages'), snapshot => {
       const msg = snapshot.val();
-      const div = document.createElement('div');
-      div.className = 'message';
-      div.innerHTML = `<span class="user">${msg.user}:</span> ${msg.text}`;
-      chatLog.appendChild(div);
-      chatLog.scrollTop = chatLog.scrollHeight;
+    const div = document.createElement('div');
+    div.className = 'message';
+
+    if (msg.text.match(/\.(gif)$/i)) {
+        div.innerHTML = `<span class="user">${msg.user}:</span><br><img src="${msg.text}" style="max-width: 100%; border-radius: 5px;" />`;
+    } else {
+        div.innerHTML = `<span class="user">${msg.user}:</span> ${msg.text}`;
+    }
+    
+    if (msg.text.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+        // Image URL
+        div.innerHTML = `<span class="user">${msg.user}:</span><br><img src="${msg.text}" style="max-width: 100%; border-radius: 5px;" />`;
+    } else if (msg.text.match(/\.(mp4|webm|ogg)$/i)) {
+        // Video URL
+        div.innerHTML = `<span class="user">${msg.user}:</span><br><video src="${msg.text}" controls style="max-width: 100%; border-radius: 5px;"></video>`;
+    } else {
+        // Regular text
+        div.innerHTML = `<span class="user">${msg.user}:</span> ${msg.text}`;
+    }
+
+
+    chatLog.appendChild(div);
+    chatLog.scrollTop = chatLog.scrollHeight;
     });
 
     chatInput.addEventListener('input', () => {
