@@ -143,6 +143,7 @@
   </div>
 
   <script type="module">
+    
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
     import { getDatabase, ref, push, onChildAdded, onValue, get, remove, set } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
@@ -159,6 +160,63 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+
+    // === AES ENCRYPTION UTILITY ===
+const secretPass = "VSF-Chat-Secret"; // You can replace with your own key
+let cryptoKey;
+
+async function deriveKey(password) {
+  const enc = new TextEncoder();
+  const keyMaterial = await window.crypto.subtle.importKey(
+    "raw",
+    enc.encode(password),
+    { name: "PBKDF2" },
+    false,
+    ["deriveKey"]
+  );
+  return window.crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt: enc.encode("vsf-salt"), // Can be static
+      iterations: 100000,
+      hash: "SHA-256"
+    },
+    keyMaterial,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"]
+  );
+}
+
+async function encryptMessage(text) {
+  const enc = new TextEncoder();
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+  const ciphertext = await window.crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    cryptoKey,
+    enc.encode(text)
+  );
+  return {
+    iv: Array.from(iv),
+    data: btoa(String.fromCharCode(...new Uint8Array(ciphertext)))
+  };
+}
+
+async function decryptMessage(payload) {
+  const dec = new TextDecoder();
+  const iv = new Uint8Array(payload.iv);
+  const data = Uint8Array.from(atob(payload.data), c => c.charCodeAt(0));
+  const plaintext = await window.crypto.subtle.decrypt(
+    { name: "AES-GCM", iv },
+    cryptoKey,
+    data
+  );
+  return dec.decode(plaintext);
+}
+
+// Prepare key once at load
+cryptoKey = await deriveKey(secretPass);
+
 
     const chatLog = document.getElementById('chat-log');
     const chatForm = document.getElementById('chat-form');
@@ -181,47 +239,44 @@
    }
     
 
-    chatForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const message = chatInput.value.trim();
-      if (!message) return;
+    chatForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const message = chatInput.value.trim();
+  if (!message) return;
 
-      push(ref(db, 'messages'), {
-        user: userId,
-        text: message,
-        time: Date.now()
-      });
+  const encrypted = await encryptMessage(message);
 
-      chatInput.value = '';
-      remove(ref(db, 'typing'));
-    });
+  push(ref(db, 'messages'), {
+    user: userId,
+    encrypted: encrypted, // Send encrypted data
+    time: Date.now()
+  });
 
-    onChildAdded(ref(db, 'messages'), snapshot => {
-      const msg = snapshot.val();
-    const div = document.createElement('div');
-    div.className = 'message';
-
-    if (msg.text.match(/\.(gif)$/i)) {
-        div.innerHTML = `<span class="user">${msg.user}:</span><br><img src="${msg.text}" style="max-width: 100%; border-radius: 5px;" />`;
-    } else {
-        div.innerHTML = `<span class="user">${msg.user}:</span> ${msg.text}`;
-    }
-    
-    if (msg.text.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-        // Image URL
-        div.innerHTML = `<span class="user">${msg.user}:</span><br><img src="${msg.text}" style="max-width: 100%; border-radius: 5px;" />`;
-    } else if (msg.text.match(/\.(mp4|webm|ogg)$/i)) {
-        // Video URL
-        div.innerHTML = `<span class="user">${msg.user}:</span><br><video src="${msg.text}" controls style="max-width: 100%; border-radius: 5px;"></video>`;
-    } else {
-        // Regular text
-        div.innerHTML = `<span class="user">${msg.user}:</span> ${msg.text}`;
-    }
+  chatInput.value = '';
+  remove(ref(db, 'typing'));
+});
 
 
-    chatLog.appendChild(div);
-    chatLog.scrollTop = chatLog.scrollHeight;
-    });
+    onChildAdded(ref(db, 'messages'), async snapshot => {
+  const msg = snapshot.val();
+  if (!msg.encrypted) return; // Ignore unencrypted legacy messages
+
+  const decryptedText = await decryptMessage(msg.encrypted);
+  const div = document.createElement('div');
+  div.className = 'message';
+
+  if (decryptedText.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+    div.innerHTML = `<span class="user">${msg.user}:</span><br><img src="${decryptedText}" style="max-width: 100%; border-radius: 5px;" />`;
+  } else if (decryptedText.match(/\.(mp4|webm|ogg)$/i)) {
+    div.innerHTML = `<span class="user">${msg.user}:</span><br><video src="${decryptedText}" controls style="max-width: 100%; border-radius: 5px;"></video>`;
+  } else {
+    div.innerHTML = `<span class="user">${msg.user}:</span> ${decryptedText}`;
+  }
+
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+});
+
 
     chatInput.addEventListener('input', () => {
       if (chatInput.value.length > 0) {
