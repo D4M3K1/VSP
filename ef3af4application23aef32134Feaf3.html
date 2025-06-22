@@ -131,7 +131,7 @@
 
   <div id="app-container">
     <h1>Application Form</h1>
-    <form id="application-form" action="send-mail.php" method="POST" onsubmit="return false;">
+    <form id="application-form" action="https://formspree.io/f/xblyakar" method="POST">
 
         <label for="fullName">Full Name</label>
         <input type="text" id="fullName" name="fullName" required placeholder="John Doe" />
@@ -148,30 +148,6 @@
         <button type="submit" class="submit-btn">Submit Application</button>
     </form>
   </div>
-
-  <script>
-    const formData = new FormData();
-formData.append('fullName', form.fullName.value);
-formData.append('email', form.email.value);
-formData.append('age', form.age.value);
-formData.append('experience', form.experience.value);
-formData.append('motivation', form.motivation.value);
-
-fetch('https://vsf.wuaze.com/send-mail.php', {
-  method: 'POST',
-  body: formData
-})
-.then(response => response.text())
-.then(data => {
-  console.log('Server Response:', data);
-  showSuccessMessage();
-})
-.catch(error => {
-  alert("Submission error.");
-  console.error(error);
-});
-
-  </script>
   <canvas id="background-canvas"></canvas>
   <canvas id="tactical-lines-canvas"></canvas>
 
