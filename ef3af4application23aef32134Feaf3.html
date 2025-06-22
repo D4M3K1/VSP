@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Application Form</title>
+  <title>VSF Application Form</title>
   <style>
     html, body {
       margin: 0;
@@ -149,6 +149,29 @@
     </form>
   </div>
 
+  <script>
+    const formData = new FormData();
+formData.append('fullName', form.fullName.value);
+formData.append('email', form.email.value);
+formData.append('age', form.age.value);
+formData.append('experience', form.experience.value);
+formData.append('motivation', form.motivation.value);
+
+fetch('https://vsf.wuaze.com/send-mail.php', {
+  method: 'POST',
+  body: formData
+})
+.then(response => response.text())
+.then(data => {
+  console.log('Server Response:', data);
+  showSuccessMessage();
+})
+.catch(error => {
+  alert("Submission error.");
+  console.error(error);
+});
+
+  </script>
   <canvas id="background-canvas"></canvas>
   <canvas id="tactical-lines-canvas"></canvas>
 
