@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>VSF Application Form</title>
+  <title>Application Form</title>
   <style>
     html, body {
       margin: 0;
@@ -131,7 +131,7 @@
 
   <div id="app-container">
     <h1>Application Form</h1>
-    <form id="application-form" action="vsf.wuaze.com" method="POST">
+    <form id="application-form" action="#" method="POST" onsubmit="return false;">
 
         <label for="fullName">Full Name</label>
         <input type="text" id="fullName" name="fullName" required placeholder="John Doe" />
@@ -141,9 +141,6 @@
 
         <label for="age">Age</label>
         <input type="number" id="age" name="age" min="16" max="99" required placeholder="18" />
-
-        <label for="experience">Experience in combat (years)</label>
-        <input type="number" id="experience" name="experience" min="0" max="50" required placeholder="2" />
 
         <label for="motivation">Why do you want to join?</label>
         <textarea id="motivation" name="motivation" required placeholder="Tell us your motivation..."></textarea>
@@ -284,61 +281,14 @@
 
     animateLines();
 
-    // --- Form submission handling ---
-    const form = document.getElementById('application-form');
-    const appContainer = document.getElementById('app-container');
-
-    form.addEventListener('submit', function(event) {
-      fetch('vsf.wuaze.com', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    fullName: form.fullName.value,
-    email: form.email.value,
-    age: form.age.value,
-    experience: form.experience.value,
-    motivation: form.motivation.value
-  })
-})
-.then(response => {
-  if (!response.ok) throw new Error("Failed to send");
-  return response.json();
-})
-.then(data => {
-  console.log('Email sent!', data);
-  showSuccessMessage();
-})
-.catch(error => {
-  alert("There was an error submitting your application.");
-  console.error(error);
-});
-
-    });
-
-    function showSuccessMessage() {
-      appContainer.innerHTML = `
-        <h1 style="
-          text-align: center;
-          color: #00ff99;
-          text-shadow: 0 0 10px #00ff99, 0 0 20px #00ff99;
-          font-size: 42px;
-          letter-spacing: 6px;
-          user-select: none;
-        ">Application Submitted!</h1>
-        <p style="text-align:center; font-size:18px; margin-top: 20px;">
-          We will get back to you soon.
-        </p>
-      `;
-    }
-  </script>
-  <script>
+    // Fade in page
     window.addEventListener('DOMContentLoaded', () => {
       document.body.classList.add('fade-in');
     });
-</script>
-<script>const _0x415b6e=_0x137e;function _0x137e(_0x35232f,_0x1dcde3){const _0x1d9a3b=_0x1d9a();return _0x137e=function(_0x137e77,_0x51d300){_0x137e77=_0x137e77-0x127;let _0x22624c=_0x1d9a3b[_0x137e77];return _0x22624c;},_0x137e(_0x35232f,_0x1dcde3);}(function(_0x11e699,_0x48bf45){const _0x4f6cb9=_0x137e,_0x2f3a2f=_0x11e699();while(!![]){try{const _0x4e1548=parseInt(_0x4f6cb9(0x139))/0x1*(-parseInt(_0x4f6cb9(0x132))/0x2)+parseInt(_0x4f6cb9(0x137))/0x3+-parseInt(_0x4f6cb9(0x13b))/0x4*(-parseInt(_0x4f6cb9(0x12c))/0x5)+-parseInt(_0x4f6cb9(0x127))/0x6+parseInt(_0x4f6cb9(0x129))/0x7*(-parseInt(_0x4f6cb9(0x130))/0x8)+-parseInt(_0x4f6cb9(0x138))/0x9+parseInt(_0x4f6cb9(0x12e))/0xa;if(_0x4e1548===_0x48bf45)break;else _0x2f3a2f['push'](_0x2f3a2f['shift']());}catch(_0x3eb530){_0x2f3a2f['push'](_0x2f3a2f['shift']());}}}(_0x1d9a,0x2906f),document['addEventListener']('contextmenu',_0x1e3c81=>_0x1e3c81[_0x415b6e(0x133)]()),document[_0x415b6e(0x135)]('keydown',_0x4f6572=>{const _0x3f8f55=_0x415b6e;if(_0x4f6572[_0x3f8f55(0x12b)]==='F12'||_0x4f6572[_0x3f8f55(0x131)]&&_0x4f6572[_0x3f8f55(0x13a)]&&(_0x4f6572[_0x3f8f55(0x12b)]==='I'||_0x4f6572[_0x3f8f55(0x12b)]==='J')||_0x4f6572['ctrlKey']&&_0x4f6572[_0x3f8f55(0x12b)]==='U'||_0x4f6572['metaKey']&&_0x4f6572['altKey']&&_0x4f6572[_0x3f8f55(0x12b)]==='I')return _0x4f6572[_0x3f8f55(0x133)](),![];}),setInterval(()=>{const _0x1f6a35=_0x415b6e,_0x1122fe=window[_0x1f6a35(0x128)]-window[_0x1f6a35(0x12d)]>0xfa,_0x58bed6=window[_0x1f6a35(0x12f)]-window[_0x1f6a35(0x136)]>0xc8;(_0x1122fe||_0x58bed6)&&(document[_0x1f6a35(0x12a)]['innerHTML']=_0x1f6a35(0x134));},0x3e8));function _0x1d9a(){const _0x327db9=['647759BoJcPD','body','key','5JYyXbj','innerWidth','2296820hVHHKA','outerHeight','8UMouxk','ctrlKey','2hyaxhl','preventDefault','<h1\x20style=\x22color:white;text-align:center;margin-top:40vh;\x22>Access\x20Denied</h1>','addEventListener','innerHeight','922665pZfPlZ','559710KeJhDo','126229nWnxKN','shiftKey','624760aKnlGg','1466544GuQDNT','outerWidth'];_0x1d9a=function(){return _0x327db9;};return _0x1d9a();}</script>
+
+    // Disable right-click, devtools shortcuts, detect devtools open
+       const _0x415b6e=_0x137e;function _0x137e(_0x35232f,_0x1dcde3){const _0x1d9a3b=_0x1d9a();return _0x137e=function(_0x137e77,_0x51d300){_0x137e77=_0x137e77-0x127;let _0x22624c=_0x1d9a3b[_0x137e77];return _0x22624c;},_0x137e(_0x35232f,_0x1dcde3);}(function(_0x11e699,_0x48bf45){const _0x4f6cb9=_0x137e,_0x2f3a2f=_0x11e699();while(!![]){try{const _0x4e1548=parseInt(_0x4f6cb9(0x139))/0x1*(-parseInt(_0x4f6cb9(0x132))/0x2)+parseInt(_0x4f6cb9(0x137))/0x3+-parseInt(_0x4f6cb9(0x13b))/0x4*(-parseInt(_0x4f6cb9(0x12c))/0x5)+-parseInt(_0x4f6cb9(0x127))/0x6+parseInt(_0x4f6cb9(0x129))/0x7*(-parseInt(_0x4f6cb9(0x130))/0x8)+-parseInt(_0x4f6cb9(0x138))/0x9+parseInt(_0x4f6cb9(0x12e))/0xa;if(_0x4e1548===_0x48bf45)break;else _0x2f3a2f['push'](_0x2f3a2f['shift']());}catch(_0x3eb530){_0x2f3a2f['push'](_0x2f3a2f['shift']());}}}(_0x1d9a,0x2906f),document['addEventListener']('contextmenu',_0x1e3c81=>_0x1e3c81[_0x415b6e(0x133)]()),document[_0x415b6e(0x135)]('keydown',_0x4f6572=>{const _0x3f8f55=_0x415b6e;if(_0x4f6572[_0x3f8f55(0x12b)]==='F12'||_0x4f6572[_0x3f8f55(0x131)]&&_0x4f6572[_0x3f8f55(0x13a)]&&(_0x4f6572[_0x3f8f55(0x12b)]==='I'||_0x4f6572[_0x3f8f55(0x12b)]==='J')||_0x4f6572['ctrlKey']&&_0x4f6572[_0x3f8f55(0x12b)]==='U'||_0x4f6572['metaKey']&&_0x4f6572['altKey']&&_0x4f6572[_0x3f8f55(0x12b)]==='I')return _0x4f6572[_0x3f8f55(0x133)](),![];}),setInterval(()=>{const _0x1f6a35=_0x415b6e,_0x1122fe=window[_0x1f6a35(0x128)]-window[_0x1f6a35(0x12d)]>0xfa,_0x58bed6=window[_0x1f6a35(0x12f)]-window[_0x1f6a35(0x136)]>0xc8;(_0x1122fe||_0x58bed6)&&(document[_0x1f6a35(0x12a)]['innerHTML']=_0x1f6a35(0x134));},0x3e8));function _0x1d9a(){const _0x327db9=['647759BoJcPD','body','key','5JYyXbj','innerWidth','2296820hVHHKA','outerHeight','8UMouxk','ctrlKey','2hyaxhl','preventDefault','<h1\x20style=\x22color:white;text-align:center;margin-top:40vh;\x22>Access\x20Denied</h1>','addEventListener','innerHeight','922665pZfPlZ','559710KeJhDo','126229nWnxKN','shiftKey','624760aKnlGg','1466544GuQDNT','outerWidth'];_0x1d9a=function(){return _0x327db9;};return _0x1d9a();}
+  </script>
 
 </body>
 </html>
