@@ -1,23 +1,34 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Content-Type");
-
-$data = json_decode(file_get_contents("php://input"));
-
+// Set your Gmail address here
 $to = "ryojiithangkhiew@gmail.com";
 $subject = "New VSF Application";
-$message = "New Application Submission:\n\n";
-$message .= "Full Name: " . $data->fullName . "\n";
-$message .= "Email: " . $data->email . "\n";
-$message .= "Age: " . $data->age . "\n";
-$message .= "Experience: " . $data->experience . " years\n";
-$message .= "Motivation:\n" . $data->motivation . "\n";
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
 
-$headers = "From: " . $data->email;
+// Read JSON from the POST body
+$input = json_decode(file_get_contents("php://input"), true);
+if (!$input) {
+  http_response_code(400);
+  echo json_encode(["error" => "Invalid input"]);
+  exit;
+}
 
-if (mail($to, $subject, $message, $headers)) {
-  echo json_encode(["success" => true]);
+$message = "New Application Received:\n\n";
+foreach ($input as $key => $value) {
+  $message .= ucfirst($key) . ": " . htmlspecialchars($value) . "\n";
+}
+
+$headers = "From: vsf-form@crook.com\r\n" .
+           "Reply-To: " . $input["email"] . "\r\n" .
+           "X-Mailer: PHP/" . phpversion();
+
+$mailSuccess = mail($to, $subject, $message, $headers);
+
+if ($mailSuccess) {
+  echo json_encode(["status" => "ok"]);
 } else {
-  echo json_encode(["success" => false]);
+  http_response_code(500);
+  echo json_encode(["error" => "Failed to send"]);
 }
 ?>
