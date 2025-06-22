@@ -114,7 +114,30 @@
     background: #111;
     box-shadow: 0 0 12px white;
   }
+#footer-links {
+  text-align: center;
+  margin: 20px 0 40px 0;
+  font-size: 14px;
+  color: #aaa;
+  z-index: 2;
+  position: relative;
+}
 
+#footer-links a {
+  color: #ccc;
+  text-decoration: none;
+  margin: 0 8px;
+  transition: color 0.2s ease;
+}
+
+#footer-links a:hover {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+#footer-links span {
+  color: #555;
+}
   #posts-container {
     max-width: 700px;
     margin: 20px auto;
@@ -199,6 +222,15 @@
   </div>
 
   <div id="posts-container"></div>
+  <div id="footer-links">
+  <a href="terms.html" target="_blank">Terms & Privacy</a>
+  <span>|</span>
+  <a href="rules.html" target="_blank">Rules</a>
+  <span>|</span>
+  <a href="faq.html" target="_blank">FAQ</a>
+  <span>|</span>
+  <a href="contact.html" target="_blank">Contact</a>
+</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
