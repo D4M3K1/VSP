@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>VINES SPECIAL FORCES</title>
-  <link rel="icon" href="https://raw.githubusercontent.com/ZAC3KRY/VSF/refs/heads/main/favicon-removebg-preview.png" type="image/x-icon">
+  <link rel="icon" href="logo.png" type="image/x-icon">
   <style>
     html, body {
       margin: 0;
@@ -14,6 +14,7 @@
       background: linear-gradient(135deg, #0f0f0f 0%, #1c1c1c 100%);
       color: white;
     }
+
     #context-message {
   position: relative;
   text-align: center;
@@ -34,6 +35,19 @@
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(255,255,255,0.03);
 }
+
+
+@keyframes fadeInContext {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
     body.fade-out {
       opacity: 0;
       transition: opacity 0.8s ease;
@@ -105,6 +119,7 @@
 <body>
 
    <div id="logo-container" style="text-align:center; margin-top: 80px; z-index:2; position: relative; user-select:none;">
+    
   <svg
     width="180"
     height="180"
@@ -138,6 +153,7 @@
   <p>All submitted data is encrypted — your credentials are private and fully protected.</p>
   <p>We do not store unencrypted personal information. You're safe here.</p>
 </div>
+
   <button class="join-the-community1" id="join-btn">JOIN</button>
   <canvas id="background-canvas"></canvas>
   <canvas id="tactical-lines-canvas"></canvas>
@@ -282,6 +298,7 @@
       }, 800); // matches the transition duration
     });
   </script>
+
 
 </body>
 </html>
