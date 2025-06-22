@@ -1,34 +1,23 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $to = "ryojiithangkhiew@gmail.com";  // ← Replace with your actual email address
-    $subject = "New VSF Application";
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type");
 
-    $name = htmlspecialchars(string: $_POST["fullName"]);
-    $email = htmlspecialchars(string: $_POST["email"]);
-    $age = htmlspecialchars(string: $_POST["age"]);
-    $experience = htmlspecialchars(string: $_POST["experience"]);
-    $motivation = htmlspecialchars(string: $_POST["motivation"]);
+$data = json_decode(file_get_contents("php://input"));
 
-    $message = "
-    New application received:\n
-    Name: $name\n
-    Email: $email\n
-    Age: $age\n
-    Experience: $experience years\n
-    Motivation:\n$motivation
-    ";
+$to = "ryojiithangkhiew@gmail.com";
+$subject = "New VSF Application";
+$message = "New Application Submission:\n\n";
+$message .= "Full Name: " . $data->fullName . "\n";
+$message .= "Email: " . $data->email . "\n";
+$message .= "Age: " . $data->age . "\n";
+$message .= "Experience: " . $data->experience . " years\n";
+$message .= "Motivation:\n" . $data->motivation . "\n";
 
-    $headers = "ryojiithangkhiew@gmail.com\r\n";  // ← Optional: change domain
-    $headers .= "Reply-To: $email\r\n";
+$headers = "From: " . $data->email;
 
-    if (mail(to: $to, subject: $subject, message: $message, additional_headers: $headers)) {
-        http_response_code(response_code: 200);
-        echo "Success";
-    } else {
-        http_response_code(response_code: 500);
-        echo "Failed to send email";
-    }
+if (mail($to, $subject, $message, $headers)) {
+  echo json_encode(["success" => true]);
 } else {
-    http_response_code(response_code: 403);
-    echo "Invalid request";
+  echo json_encode(["success" => false]);
 }
+?>
