@@ -133,18 +133,12 @@
   <div id="app-container">
     <h1>Application Form</h1>
     <form id="application-form" action="https://formspree.io/f/xblyakar" method="POST">
-
-        <label for="fullName">Full Name</label>
-        <input type="text" id="fullName" name="fullName" required placeholder="John Doe" />
-
-        <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" required placeholder="email@example.com" />
-
+      
         <label for="age">Age(18+)</label>
         <input type="number" id="age" name="age" min="16" max="99" required placeholder="18" />
 
         <label for="motivation">Description</label>
-        <textarea id="motivation" name="motivation" required placeholder="Tell us about urself..."></textarea>
+        <textarea id="motivation" name="motivation" required placeholder="Tell us about urself and why you wanna join..."></textarea>
 
         <button type="submit" class="submit-btn">Submit Application</button>
     </form>
